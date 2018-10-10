@@ -21,18 +21,4 @@ public interface Post {
     void setIsBookmark(boolean isBookmark);
     boolean getIsRead();
     void setIsRead(boolean isRead);
-//    int getId();
-//    int getOnlineId();
-//    String getTitle();
-//    String getAuthor();
-//    String getThumbnailUrl();
-//    String getImagesUrls();
-//    String getOriginalUrl();
-//    Date getDate();
-//    int getCategoryId();
-//    String getCategoryName();
-//    String getDescription();
-//    Date getLastUpdateDate();
-//    boolean getIsBookmark();
-//    void setIsBookmark(boolean favorite);
 }

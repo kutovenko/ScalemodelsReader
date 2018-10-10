@@ -75,7 +75,7 @@ public class DataRepository {
     }
 
     /**
-     * Get the list of products from the database and get notified when the data changes.
+     * Get the list of posts from the database and get notified when the data changes.
      */
     public LiveData<List<PostEntity>> getPosts() {
         return mObservablePosts;

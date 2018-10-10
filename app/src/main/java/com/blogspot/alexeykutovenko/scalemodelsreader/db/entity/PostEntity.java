@@ -86,20 +86,6 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     @ColumnInfo(name = "isRead")
     private boolean isRead;
 
-//    private int onlineId;
-//    private String title;
-//    private String author;
-//    private String thumbnailUrl;
-//    private String imagesUrls;
-//    private String originalUrl;
-//    private Date date;
-//    private int categoryId;
-//    private String categoryName;
-//    private Date lastUpdateDate;
-//    private String description;
-//    private boolean isFavorite;
-//    private boolean isRead;
-
     @Override
     public int getId() {
         return id;
@@ -227,103 +213,6 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
         this.description = description;
     }
 
-//    @Override
-//    public String toString()
-//    {
-//        return "ClassPojo [author = "+author+", title_ru = "+title_ru+", last_update = "+last_update+", category = "+category+", original_url = "+original_url+", thumbnail = "+thumbnail+", printing_url = "+printing_url+", images = "+images+", type = "+type+", date = "+date+", storyid = "+storyid+", description_ru = "+description_ru+"]";
-//    }
-
-
-//}
-//
-//    @Override
-//    public int getOnlineId() {
-//        return onlineId;
-//    }
-//    public void setOnlineId(int onlineId) {
-//        this.onlineId = onlineId;
-//    }
-//
-//    @Override
-//    public String getTitle() {
-//        return title;
-//    }
-//    public void setTitle(String title) {
-//        this.title = title;
-//    }
-//
-//    @Override
-//    public String getAuthor() {
-//        return author;
-//    }
-//    public void setAuthor(String author) {
-//        this.author = author;
-//    }
-//
-//    @Override
-//    public String getThumbnailUrl() {
-//        return thumbnailUrl;
-//    }
-//    public void setThumbnailUrl(String thumbnailUrl) {
-//        this.thumbnailUrl = thumbnailUrl;
-//    }
-//
-//    @Override
-//    public String getImagesUrls() {
-//        return imagesUrls;
-//    }
-//    public void setImagesUrls(String imagesUrls) {
-//        this.imagesUrls = imagesUrls;
-//    }
-//
-//    @Override
-//    public String getOriginalUrl() {
-//        return originalUrl;
-//    }
-//    public void setOriginalUrl(String originalUrl) {
-//        this.originalUrl = originalUrl;
-//    }
-//
-//    @Override
-//    public Date getDate() {
-//        return date;
-//    }
-//    public void setDate(Date date) {
-//        this.date = date;
-//    }
-//
-//    @Override
-//    public int getCategoryId() {
-//        return categoryId;
-//    }
-//    public void setCategoryId(int categoryId) {
-//        this.categoryId = categoryId;
-//    }
-//
-//    @Override
-//    public String getCategoryName() {
-//        return categoryName;
-//    }
-//    public void setCategoryName(String categoryName) {
-//        this.categoryName = categoryName;
-//    }
-//
-//    @Override
-//    public Date getLastUpdateDate() {
-//        return lastUpdateDate;
-//    }
-//    public void setLastUpdateDate(Date lastUpdateDate) {
-//        this.lastUpdateDate = lastUpdateDate;
-//    }
-//
-//    @Override
-//    public String getDescription() {
-//        return description;
-//    }
-//    public void setDescription(String description) {
-//        this.description = description;
-//    }
-
     @Override
     @Bindable
     public boolean getIsBookmark() {
@@ -347,24 +236,6 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     public PostEntity() {
     }
 
-//    public PostEntity(int id, int onlineId, String title, String author, String thumbnailUrl,
-//                      String imagesUrls, String originalUrl, Date date, int categoryId,
-//                      String categoryName, Date lastUpdateDate, String description,
-//                      boolean isBookmark) {
-//        this.id = id;
-//        this.onlineId = onlineId;
-//        this.title = title;
-//        this.author = author;
-//        this.thumbnailUrl = thumbnailUrl;
-//        this.imagesUrls = imagesUrls;
-//        this.originalUrl = originalUrl;
-//        this.date = date;
-//        this.categoryId = categoryId;
-//        this.categoryName = categoryName;
-//        this.lastUpdateDate = lastUpdateDate;
-//        this.description = description;
-//        this.isBookmark = isBookmark;
-//    }
 
     public PostEntity(Post post) {
         this.id = post.getId();
@@ -383,27 +254,12 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
         this.isBookmark = post.getIsBookmark();
         this.isRead = post.getIsRead();
 
-//
-//        this.id = post.getId();
-//        this.onlineId = post.getOnlineId();
-//        this.title = post.getTitle();
-//        this.author = post.getAuthor();
-//        this.thumbnailUrl = post.getThumbnailUrl();
-//        this.imagesUrls = post.getImagesUrls();
-//        this.originalUrl = post.getOriginalUrl();
-//        this.date = post.getDate();
-//        this.categoryId = post.getCategoryId();
-//        this.categoryName = post.getCategoryName();
-//        this.lastUpdateDate = post.getLastUpdateDate();
-//        this.description = post.getDescription();
-//        this.isBookmark = post.getIsBookmark();
     }
 
     public static DiffUtil.ItemCallback<PostEntity> DIFF_CALLBACK = new DiffUtil.ItemCallback<PostEntity>() {
         @Override
         public boolean areItemsTheSame(@NonNull PostEntity oldItem, @NonNull PostEntity newItem) {
-//            return oldItem.id == newItem.id;
-            return oldItem.storyid == newItem.storyid;
+            return oldItem.storyid.equals(newItem.storyid);
 
         }
 
