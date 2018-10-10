@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable name="post"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.model.Post"/>
+        <variable name="callback"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback"/>
+        <variable name="bookmarkCallback"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.BookmarkClickCallback"/>
+        <variable
+            name="viewModel"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel.PostListViewModel"/>
+        <variable
+            name="newsFragment"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.NewsFragment"/>
+    </data>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cvCardForeground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/item_horizontal_margin"
+        android:layout_marginEnd="@dimen/item_horizontal_margin"
+        android:minHeight="@dimen/product_item_min_height"
+        android:onClick="@{() ->  callback.onClick(post)}"
+        android:orientation="horizontal"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvAuthor"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="8dp"
+                        android:layout_weight="1"
+                        android:gravity="right"
+                        android:text="@{post.author.name}" />
+
+                    <TextView
+                        android:id="@+id/tvDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:text="06.10.2018" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_weight="1"
+                    android:text="@{post.title}" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/ivPostPic"
+                android:layout_width="150dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                app:thumbnailUrl="@{post.thumbnailUrl}" />
+
+            <CheckBox
+                android:id="@+id/checkBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:button="@xml/custom_checkbox"
+                android:checked="@={post.isBookmark}"
+                android:onClick="@{() ->  bookmarkCallback.onClick(post)}"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</layout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="isLoading"
+            type="boolean" />
+        <variable name="post"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.model.Post"/>
+        <variable name="callback"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback"/>
+    </data>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvFeaturedList"
+            android:layout_width="match_parent"
+            android:layout_height="148dp"
+            android:layout_marginRight="8dp"
+            android:contentDescription="Featured list"
+            app:layoutManager="LinearLayoutManager"
+            app:visibleGone="@{!isLoading}" />
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvPostList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="Post list"
+                android:layoutAnimation="@anim/layout_animation_fall_down"
+                app:layoutManager="LinearLayoutManager"
+                app:visibleGone="@{!isLoading}" />
+
+            <TextView
+            android:id="@+id/loading_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"
+            android:text="Loading"
+            android:textAlignment="center"
+            app:visibleGone="@{isLoading}"/>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
+</layout>
