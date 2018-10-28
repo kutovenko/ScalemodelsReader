@@ -2,39 +2,51 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+
         <variable
             name="isLoading"
             type="boolean" />
-        <variable name="post"
-            type="com.blogspot.alexeykutovenko.scalemodelsreader.model.Post"/>
-        <variable name="callback"
-            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback"/>
-        <variable name="bookmarkCallback"
-            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.BookmarkClickCallback"/>
+
+        <variable
+            name="post"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.model.Post" />
+
+        <variable
+            name="callback"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback" />
+
+        <variable
+            name="bookmarkCallback"
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.BookmarkClickCallback" />
     </data>
+
 
     <LinearLayout
         android:id="@+id/llBookmarksLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:orientation="vertical">
+
 
         <TextView
             android:id="@+id/tvNoFavorites"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_gravity="top"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/no_saved_yet"
             android:textAlignment="center"
             app:visibleGone="@{isLoading}" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvFavoritesPostList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:contentDescription="@string/list_of_saved_items"
             android:layoutAnimation="@anim/layout_animation_fall_down"
             app:layoutManager="LinearLayoutManager"
             app:visibleGone="@{!isLoading}" />
     </LinearLayout>
+
 </layout>

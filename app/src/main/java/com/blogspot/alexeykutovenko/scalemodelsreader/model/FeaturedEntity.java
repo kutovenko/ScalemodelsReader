@@ -1,31 +1,23 @@
-package com.blogspot.alexeykutovenko.scalemodelsreader.db.entity;
+package com.blogspot.alexeykutovenko.scalemodelsreader.model;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
-import android.databinding.BaseObservable;
-import android.databinding.Bindable;
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 
-import com.blogspot.alexeykutovenko.scalemodelsreader.BR;
+//import com.blogspot.alexeykutovenko.scalemodelsreader.BR;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.converters.DataConverters;
-import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
-import com.blogspot.alexeykutovenko.scalemodelsreader.network.Author;
-import com.blogspot.alexeykutovenko.scalemodelsreader.network.Category;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-/**
- * Main Entity class for all the posts from Scalemodels.
- * Two sets of annotations used: one for Room and another for Retfofit.
- * Room annotation
- * Gson annotation
- */
-@Entity (tableName = "posts")
-public class PostEntity extends BaseObservable implements Post, Serializable {
+@Entity(tableName = "featured")
+public class FeaturedEntity extends BaseObservable implements Featured, Serializable {
     @PrimaryKey(autoGenerate = true)           // Room annotation
     private int id;
 
@@ -42,10 +34,10 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     @SerializedName("last_update")
     private String lastUpdate;
 
-    @ColumnInfo(name = "category") //to plain
-    @SerializedName("category")
-    @TypeConverters({DataConverters.class})
-    private Category category;
+//    @ColumnInfo(name = "category") //to plain
+//    @SerializedName("category")
+//    @TypeConverters({DataConverters.class})
+//    private Category category;
 
     @ColumnInfo(name = "original_url")
     @SerializedName("original_url")
@@ -83,6 +75,7 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
 
     @ColumnInfo(name = "isBookmark")
     private boolean isBookmark;
+
     @ColumnInfo(name = "isRead")
     private boolean isRead;
 
@@ -90,159 +83,144 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     @Override
-    public Author getAuthor ()
-    {
+    public Author getAuthor() {
         return author;
     }
-    public void setAuthor (Author author)
-    {
+
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
     @Override
-    public String getTitle ()
-    {
+    public String getTitle() {
         return title;
     }
-    public void setTitle (String title)
-    {
+
+    public void setTitle(String title) {
         this.title = title;
     }
 
     @Override
-    public String getLastUpdate ()
-    {
+    public String getLastUpdate() {
         return lastUpdate;
     }
-    public void setLastUpdate (String lastUpdate)
-    {
+
+    public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 
     @Override
-    public Category getCategory ()
-    {
-        return category;
-    }
-    public void setCategory (Category category)
-    {
-        this.category = category;
-    }
-
-    @Override
-    public String getOriginalUrl ()
-    {
+    public String getOriginalUrl() {
         return originalUrl;
     }
-    public void setOriginalUrl (String originalUrl)
-    {
+
+    public void setOriginalUrl(String originalUrl) {
         this.originalUrl = originalUrl;
     }
 
     @Override
-    public String getThumbnailUrl()
-    {
+    public String getThumbnailUrl() {
         return thumbnailUrl;
     }
-    public void setThumbnailUrl(String thumbnailUrl)
-    {
+
+    public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
     }
 
     @Override
-    public String getPrintingUrl ()
-    {
+    public String getPrintingUrl() {
         return printingUrl;
     }
-    public void setPrintingUrl (String printingUrl)
-    {
+
+    public void setPrintingUrl(String printingUrl) {
         this.printingUrl = printingUrl;
     }
 
     @Override
-    public String[] getImagesUrls ()
-    {
+    public String[] getImagesUrls() {
         return imagesUrls;
     }
-    public void setImagesUrls (String[] imagesUrls)
-    {
+
+    public void setImagesUrls(String[] imagesUrls) {
         this.imagesUrls = imagesUrls;
     }
 
     @Override
-    public String getType ()
-    {
+    public String getType() {
         return type;
     }
-    public void setType (String type)
-    {
+
+    public void setType(String type) {
         this.type = type;
     }
 
     @Override
-    public String getDate ()
-    {
+    public String getDate() {
         return date;
     }
-    public void setDate (String date)
-    {
+
+    public void setDate(String date) {
         this.date = date;
     }
 
     @Override
-    public String getStoryid ()
-    {
+    public String getStoryid() {
         return storyid;
     }
-    public void setStoryid (String storyid)
-    {
+
+    public void setStoryid(String storyid) {
         this.storyid = storyid;
     }
 
     @Override
-    public String getDescription ()
-    {
+    public String getDescription() {
         return description;
     }
-    public void setDescription (String description)
-    {
+
+    public void setDescription(String description) {
         this.description = description;
     }
 
     @Override
-    @Bindable
+//    @Bindable
     public boolean getIsBookmark() {
         return isBookmark;
     }
+
     @Override
     public void setIsBookmark(boolean isBookmark) {
         this.isBookmark = isBookmark;
-        notifyPropertyChanged(BR.isBookmark);
+//        notifyPropertyChanged(BR.isBookmark);
     }
 
     @Override
     public boolean getIsRead() {
         return isRead;
     }
+
     @Override
     public void setIsRead(boolean isRead) {
         this.isRead = isRead;
     }
 
-    public PostEntity() {
+
+    public FeaturedEntity() {
+
     }
 
 
-    public PostEntity(Post post) {
+    public FeaturedEntity(FeaturedEntity post) {
         this.id = post.getId();
         this.author = post.getAuthor();
         this.title = post.getTitle();
         this.lastUpdate = post.getLastUpdate();
-        this.category = post.getCategory();
+//        this.category = post.getCategory();
         this.originalUrl = post.getOriginalUrl();
         this.thumbnailUrl = post.getThumbnailUrl();
         this.printingUrl = post.getPrintingUrl();
@@ -256,15 +234,15 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
 
     }
 
-    public static DiffUtil.ItemCallback<PostEntity> DIFF_CALLBACK = new DiffUtil.ItemCallback<PostEntity>() {
+    public static DiffUtil.ItemCallback<FeaturedEntity> DIFF_CALLBACK = new DiffUtil.ItemCallback<FeaturedEntity>() {
         @Override
-        public boolean areItemsTheSame(@NonNull PostEntity oldItem, @NonNull PostEntity newItem) {
+        public boolean areItemsTheSame(@NonNull FeaturedEntity oldItem, @NonNull FeaturedEntity newItem) {
             return oldItem.storyid.equals(newItem.storyid);
 
         }
 
         @Override
-        public boolean areContentsTheSame(@NonNull PostEntity oldItem, @NonNull PostEntity newItem) {
+        public boolean areContentsTheSame(@NonNull FeaturedEntity oldItem, @NonNull FeaturedEntity newItem) {
             return oldItem.equals(newItem);
         }
     };

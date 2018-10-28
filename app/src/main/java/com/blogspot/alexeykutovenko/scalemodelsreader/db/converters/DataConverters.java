@@ -1,9 +1,9 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.db.converters;
 
-import android.arch.persistence.room.TypeConverter;
+import androidx.room.TypeConverter;
 
-import com.blogspot.alexeykutovenko.scalemodelsreader.network.Author;
-import com.blogspot.alexeykutovenko.scalemodelsreader.network.Category;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
 import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants;
 
 import java.util.Arrays;

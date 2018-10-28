@@ -1,16 +1,22 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.ui;
 
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.widget.Toolbar;
+
+import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.R;
-import com.blogspot.alexeykutovenko.scalemodelsreader.model.Featured;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
+
+import static com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants.KEY_POST_ID;
 
 public class MainActivity extends AppCompatActivity {
     NavController navController;
@@ -20,6 +26,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setElevation(8);
+        setSupportActionBar(toolbar);
 
         bottomNavigationView = findViewById(R.id.navigation);
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -33,15 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void show(Post post) {
         Bundle bundle = new Bundle(2);
-        bundle.putInt("id", post.getId());
-        bundle.putString("type", "post");
-        navController.navigate(R.id.postFragment, bundle);
-    }
-
-    public void show(Featured featured) {
-        Bundle bundle = new Bundle(2);
-        bundle.putInt("id", featured.getId());
-        bundle.putString("type", "featured");
+        bundle.putInt(KEY_POST_ID, post.getId());
+        bundle.putString(MyAppConctants.KEY_POST_TITLE, post.getTitle());
         navController.navigate(R.id.postFragment, bundle);
     }
 

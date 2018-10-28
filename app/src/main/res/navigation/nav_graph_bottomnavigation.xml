@@ -6,9 +6,9 @@
     app:startDestination="@id/newsFragment">
     <fragment
         android:id="@+id/archiveFragment"
-        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.ArchiveFragment"
+        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.SettingsFragment"
         android:label="fragment_archive"
-        tools:layout="@layout/fragment_archive" >
+        tools:layout="@layout/fragment_settings">
         <action
             android:id="@+id/action_archiveFragment_to_postFragment"
             app:destination="@id/postFragment" />

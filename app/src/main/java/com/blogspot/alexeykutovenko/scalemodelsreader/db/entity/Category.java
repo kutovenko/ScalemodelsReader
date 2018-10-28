@@ -1,4 +1,6 @@
-package com.blogspot.alexeykutovenko.scalemodelsreader.network;
+package com.blogspot.alexeykutovenko.scalemodelsreader.db.entity;
+
+import androidx.annotation.NonNull;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants;
 
@@ -28,14 +30,17 @@ public class Category
         this.name_ru = name_ru;
     }
 
+    public Category() {
+    }
+
     public Category (String id, String name_ru){
         this.id = id;
         this.name_ru = name_ru;
     }
 
+    @NonNull
     @Override
-    public String toString()
-    {
+    public String toString() {
         return id + MyAppConctants.STRING_SEPARATOR + name_ru;
     }
 }

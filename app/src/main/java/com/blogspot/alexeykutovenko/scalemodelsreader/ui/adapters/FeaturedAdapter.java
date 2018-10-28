@@ -1,32 +1,33 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.ui.adapters;
 
-import android.databinding.DataBindingUtil;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.R;
 import com.blogspot.alexeykutovenko.scalemodelsreader.databinding.ItemFeaturedBinding;
-import com.blogspot.alexeykutovenko.scalemodelsreader.model.Featured;
-import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.FeaturedClickCallback;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
+import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class FeaturedAdapter extends RecyclerView.Adapter<FeaturedAdapter.FeaturedViewHolder> {
 
-    List<? extends Featured> mFeaturedList;
+    List<? extends Post> mFeaturedList;
     @Nullable
-    private final FeaturedClickCallback mFeaturedClickCallback;
+    private final PostClickCallback mFeaturedClickCallback;
 
-    public FeaturedAdapter(@Nullable FeaturedClickCallback clickCallback) {
+    public FeaturedAdapter(@Nullable PostClickCallback clickCallback) {
         mFeaturedClickCallback = clickCallback;
     }
 
-    public void setFeaturedList(final List<? extends Featured> featuredList) {
+    public void setFeaturedList(final List<? extends Post> featuredList) {
         if (mFeaturedList == null) {
             mFeaturedList = featuredList;
             notifyItemRangeInserted(0, featuredList.size());
@@ -52,21 +53,20 @@ public class FeaturedAdapter extends RecyclerView.Adapter<FeaturedAdapter.Featur
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    Featured newFeatured = featuredList.get(newItemPosition);
-                    Featured oldFeatured = mFeaturedList.get(oldItemPosition);
+                    Post newFeatured = featuredList.get(newItemPosition);
+                    Post oldFeatured = mFeaturedList.get(oldItemPosition);
                     return newFeatured.getId() == oldFeatured.getId()
-                            && Objects.equals(newFeatured.getOnlineId(), oldFeatured.getOnlineId())
+                            && Objects.equals(newFeatured.getStoryid(), oldFeatured.getStoryid())
                             && Objects.equals(newFeatured.getTitle(), oldFeatured.getTitle())
                             && Objects.equals(newFeatured.getAuthor(), oldFeatured.getAuthor())
                             && Objects.equals(newFeatured.getThumbnailUrl(), oldFeatured.getThumbnailUrl())
-                            && Objects.equals(newFeatured.getImagesUrls(), oldFeatured.getImagesUrls())
+                            && Arrays.equals(newFeatured.getImagesUrls(), oldFeatured.getImagesUrls())
                             && Objects.equals(newFeatured.getOriginalUrl(), oldFeatured.getOriginalUrl())
                             && Objects.equals(newFeatured.getDate(), oldFeatured.getDate())
-                            && Objects.equals(newFeatured.getCategoryId(), oldFeatured.getCategoryId())
-                            && Objects.equals(newFeatured.getCategoryName(), oldFeatured.getCategoryName())
+//                            && Objects.equals(newFeatured.getCategory(), oldFeatured.getCategory())
                             && Objects.equals(newFeatured.getDescription(), oldFeatured.getDescription())
-                            && Objects.equals(newFeatured.getLastUpdateDate(), oldFeatured.getLastUpdateDate())
-                            && Objects.equals(newFeatured.getIsFavorite(), oldFeatured.getIsFavorite());
+                            && Objects.equals(newFeatured.getLastUpdate(), oldFeatured.getLastUpdate())
+                            && Objects.equals(newFeatured.getIsBookmark(), oldFeatured.getIsBookmark());
                 }
             });
             mFeaturedList = featuredList;
@@ -89,7 +89,7 @@ public class FeaturedAdapter extends RecyclerView.Adapter<FeaturedAdapter.Featur
     @Override
     public void onBindViewHolder(@NonNull FeaturedAdapter.FeaturedViewHolder featuredViewHolder,
                                  int position) {
-        featuredViewHolder.binding.setFeatured(mFeaturedList.get(position));///////////
+        featuredViewHolder.binding.setPost(mFeaturedList.get(position));///////////
         featuredViewHolder.binding.executePendingBindings();
     }
 
@@ -109,4 +109,3 @@ public class FeaturedAdapter extends RecyclerView.Adapter<FeaturedAdapter.Featur
         }
     }
 }
-

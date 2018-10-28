@@ -1,7 +1,7 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.model;
 
-import com.blogspot.alexeykutovenko.scalemodelsreader.network.Author;
-import com.blogspot.alexeykutovenko.scalemodelsreader.network.Category;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
 
 public interface Post {
     int getId();
@@ -17,8 +17,12 @@ public interface Post {
     String getDate();
     String getStoryid();
     String getDescription();
+
+    String getConvertedDate();
     boolean getIsBookmark();
     void setIsBookmark(boolean isBookmark);
-    boolean getIsRead();
-    void setIsRead(boolean isRead);
+
+    boolean getIsFeatured();
+
+    String transformDate(String unixDate);
 }

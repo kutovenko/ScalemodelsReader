@@ -1,7 +1,7 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.network;
 
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.FeaturedEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.FeaturedEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 
 import java.util.List;
 

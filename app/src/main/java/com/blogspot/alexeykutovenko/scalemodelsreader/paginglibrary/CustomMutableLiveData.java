@@ -1,9 +1,9 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.paginglibrary;
 
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.databinding.BaseObservable;
-import android.databinding.Observable;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Observable;
 
 public class CustomMutableLiveData <T extends BaseObservable> extends MediatorLiveData<T> {
     @Override

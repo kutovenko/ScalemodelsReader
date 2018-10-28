@@ -1,4 +1,4 @@
-package com.blogspot.alexeykutovenko.scalemodelsreader.network;
+package com.blogspot.alexeykutovenko.scalemodelsreader.db.entity;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants;
 

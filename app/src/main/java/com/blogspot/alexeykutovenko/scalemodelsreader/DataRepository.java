@@ -1,20 +1,23 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.paging.DataSource;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.paging.DataSource;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.AppDatabase;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.FeaturedEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.FeaturedEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.network.ScalemodelsApi;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -29,7 +32,7 @@ public class DataRepository {
     private final ScalemodelsApi mScalemodelsApi;
     private MediatorLiveData<List<PostEntity>> mObservablePosts;
     private MediatorLiveData<List<PostEntity>> mObservableBookmarks; //new
-    private MediatorLiveData<List<FeaturedEntity>> mObservableFeatureds;
+    private MediatorLiveData<List<PostEntity>> mObservableFeatureds;
 
     private MediatorLiveData<List<PostEntity>> mObservableScalemodelsPosts;
 
@@ -44,21 +47,20 @@ public class DataRepository {
                         mObservablePosts.postValue(postEntities);
                     }
                 });
-        //new Favorites
+
         mObservableBookmarks = new MediatorLiveData<>();
-        mObservableBookmarks.addSource(mDatabase.postDao().loadAllFavoritePosts(true),
+        mObservableBookmarks.addSource(mDatabase.postDao().loadAllBookmarks("date DESC"),
                 postEntities -> {
                     if (mDatabase.getDatabaseCreated().getValue() != null) {
                         mObservableBookmarks.postValue(postEntities);
                     }
                 });
 
-        //new Featured items
         mObservableFeatureds = new MediatorLiveData<>();
-        mObservableFeatureds.addSource(mDatabase.featuredDao().loadAllBookmarks(),
-                featuredEntities -> {
+        mObservableFeatureds.addSource(mDatabase.postDao().loadAllFeatureds(),
+                postEntities -> {
                     if (mDatabase.getDatabaseCreated().getValue() != null) {
-                        mObservableFeatureds.postValue(featuredEntities);
+                        mObservableFeatureds.postValue(postEntities);
                     }
                 });
     }
@@ -81,30 +83,29 @@ public class DataRepository {
         return mObservablePosts;
     }
 
-    public LiveData<PostEntity> loadPost(final int postId) {
-        return mDatabase.postDao().loadPost(postId);
-    }
-
-    /**
-     * Get the list of favorites posts and get notified of its changes
-     */
     public LiveData<List<PostEntity>> getAllBookmarks() {
         return mObservableBookmarks;
     }
 
-    public LiveData<PostEntity> loadBookmark(final int postId) {
-        return mDatabase.postDao().loadFavoritePost(postId, true);
-    }
-
-    /**
-     * Get the list of featured posts and get notified of its changes
-     */
-    public LiveData<List<FeaturedEntity>> getAllFeaturedPosts() {
+    public LiveData<List<PostEntity>> getAllFeaturedPosts() {
         return mObservableFeatureds;
     }
 
-    public LiveData<FeaturedEntity> loadFeaturedPost(final int featuredId) {
-        return mDatabase.featuredDao().loadFeatured(featuredId);
+
+    public LiveData<List<PostEntity>> filterBookmarks(String searchQuery) {
+        return mDatabase.postDao().filterBookmarks(searchQuery);
+    }
+
+    public LiveData<PostEntity> loadPost(final int postId) {
+        return mDatabase.postDao().loadPost(postId);
+    }
+
+    public LiveData<PostEntity> loadBookmark(final int postId) {
+        return mDatabase.postDao().loadBookmark(postId);
+    }
+
+    public LiveData<PostEntity> loadFeaturedPost(final int featuredId) {
+        return mDatabase.postDao().loadFeatured(featuredId);
     }
 
     /**
@@ -119,39 +120,29 @@ public class DataRepository {
      * Gets unique new posts (by story id) from Scalemodels in reverse chronological order.
      * Updates local database.
      */
-    public void getScalemodelsUpdates(){
+    public void getScalemodelsPosts() {
         Log.d("DATABASE R connect", " Repo get updates entered");
         Call<List<PostEntity>> call = mScalemodelsApi.getScalemodelsPosts();
         call.enqueue(new Callback<List<PostEntity>>() {
             @Override
             public void onResponse(@NonNull Call<List<PostEntity>> call,
                                    @NonNull Response<List<PostEntity>> response) {
-                Set<PostEntity> onlineSet = new HashSet<>(response.body());
-                Log.d("DATABASE R onlineSet ", String.valueOf(onlineSet.size()));
-
                 Executor executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
                     final List<PostEntity> dbList = mDatabase.postDao().getAllPosts();
-                    Set<PostEntity> dbSet = new HashSet<>(dbList);
-                    Log.d("DATABASE R dbSet", String.valueOf(dbSet.size()));
                     ArrayList<PostEntity> uniqueList = new ArrayList<>();
-
-                    HashSet<String> bIds = new HashSet<>(dbSet.size());
-                    for (PostEntity b : dbSet){
-                        bIds.add(b.getStoryid());
-
+                    HashSet<String> localIds = new HashSet<>(dbList.size());
+                    for (PostEntity entity : dbList) {
+                        localIds.add(entity.getStoryid());
                     }
-                    Log.d("DATABASE R bids ", String.valueOf(bIds.size()));
 
-                    for (PostEntity a : response.body()) {
-                        if (!bIds.contains(a.getStoryid())){
-                            uniqueList.add(a);
+                    for (PostEntity entity : response.body()) {
+                        if (!localIds.contains(entity.getStoryid())) {
+                            uniqueList.add(entity);
                         }
                     }
-                    Log.d("DATABASE R unique ", String.valueOf(uniqueList.size()));
 
                     mDatabase.postDao().insertAll(uniqueList);
-                    Log.d("DATABASE R inserted", String.valueOf(uniqueList.size()));
                 });
             }
 
@@ -162,17 +153,20 @@ public class DataRepository {
         });
     }
 
-
     public void getScalemodelsFeatured(){
+        Log.d("FEATURED ", "entered");
+
         Call<List<FeaturedEntity>> call = mScalemodelsApi.getScalemodelsFeaturedPosts();
         call.enqueue(new Callback<List<FeaturedEntity>>() {
             @Override
             public void onResponse(@NonNull Call<List<FeaturedEntity>> call,
                                    @NonNull Response<List<FeaturedEntity>> response) {
+                Log.d("FEATURED responce ", String.valueOf(response.body().size()));
                 Executor executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
-                    mDatabase.featuredDao().deleteAllFeatured();
-                    mDatabase.featuredDao().insertAll(response.body());
+                    mDatabase.postDao().deleteAllFeatureds();
+                    mDatabase.postDao().insertAll(convertFeaturedToPost(response.body()));
+                    Log.d("FEATURED ", String.valueOf(convertFeaturedToPost(response.body()).size()));
                 });
             }
 
@@ -181,5 +175,30 @@ public class DataRepository {
                 Log.e("Retrofit Featured Error", t.getMessage());
             }
         });
+    }
+
+
+    private List<PostEntity> convertFeaturedToPost(List<FeaturedEntity> featuredList) {
+        List<PostEntity> postList = new ArrayList<>(featuredList.size());
+        for (FeaturedEntity featuredEntity : featuredList) {
+            PostEntity post = new PostEntity();
+            post.setId(featuredEntity.getId());
+            post.setAuthor(featuredEntity.getAuthor());
+            post.setTitle(featuredEntity.getTitle());
+            post.setLastUpdate(featuredEntity.getLastUpdate());
+            post.setCategory(new Category());
+            post.setOriginalUrl(featuredEntity.getOriginalUrl());
+            post.setThumbnailUrl(featuredEntity.getThumbnailUrl());
+            post.setPrintingUrl(featuredEntity.getPrintingUrl());
+            post.setImagesUrls(featuredEntity.getImagesUrls());
+            post.setType(featuredEntity.getType());
+            post.setDate(featuredEntity.getDate());
+            post.setStoryid(featuredEntity.getStoryid());
+            post.setDescription(featuredEntity.getDescription());
+            post.setIsBookmark(false);
+            post.setIsFeatured(true);
+            postList.add(post);
+        }
+        return postList;
     }
 }

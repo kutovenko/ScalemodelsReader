@@ -1,11 +1,12 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments;
 
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.databinding.DataBindingUtil;
+import androidx.lifecycle.ViewModelProviders;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +20,15 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel.PostViewModel;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import static com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants.KEY_POST_ID;
+import static com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants.KEY_POST_TITLE;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PostFragment extends Fragment {
     public static String TAG = "post";
-    private static final String KEY_POST_ID = "id";
+
     private FragmentPostBinding mBinding;
     private NavController navController;
 
@@ -37,6 +41,8 @@ public class PostFragment extends Fragment {
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_post, container, false);
         navController = Navigation.findNavController(getActivity(), R.id.nav_host_fragment);
+        String title = getArguments().getString(KEY_POST_TITLE);
+        getActivity().setTitle(title);
 
         return mBinding.getRoot();
     }
@@ -46,7 +52,8 @@ public class PostFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         PostViewModel.Factory factory = new PostViewModel.Factory(
-                getActivity().getApplication(), getArguments().getInt(KEY_POST_ID));
+                getActivity().getApplication(),
+                getArguments().getInt(KEY_POST_ID));
 
         final PostViewModel model = ViewModelProviders.of(this, factory)
                 .get(PostViewModel.class);
@@ -60,20 +67,10 @@ public class PostFragment extends Fragment {
         model.getObservablePost().observe(this, model::setPost);
     }
 
-
-//    /** Creates post fragment for specific ID */
-//    public static PostFragment forPost(int postId) {
-//        PostFragment fragment = new PostFragment();
-//        Bundle args = new Bundle();
-//        args.putInt(KEY_POST_ID, postId);
-//        fragment.setArguments(args);
-//        return fragment;
-//    }
-
     private final WebClickCallback mWebClickCallback = post -> {
-
-        Bundle bundle = new Bundle(1);
-        bundle.putString(MyAppConctants.URL, post.getPrintingUrl());
+        Bundle bundle = new Bundle(2);
+        bundle.putString(MyAppConctants.PRINTING_URL, post.getPrintingUrl());
+        bundle.putString(MyAppConctants.ORIGINAL_URL, post.getOriginalUrl());
         navController.navigate(R.id.webviewFragment, bundle);
     };
 

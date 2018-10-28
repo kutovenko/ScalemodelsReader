@@ -1,20 +1,13 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.db;
 
-import android.support.annotation.NonNull;
-import android.util.Log;
-
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.converters.DataConverters;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.FeaturedEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.FeaturedEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class DataGenerator {
 //Id - i
@@ -345,24 +338,24 @@ public class DataGenerator {
 
     public static List<FeaturedEntity> generateFeatured() {
         List<FeaturedEntity> posts = new ArrayList<>(5);
-        for (int i = 0; i < 4; i++) {
-            FeaturedEntity post = new FeaturedEntity();
-            post.setId(i);
-//            post.setOnlineId(ONLINE_ID[i]);
-            post.setTitle(TITLE_NAME[i]);
-            post.setAuthor(AUTHOR[i]);
-            post.setThumbnailUrl(THUMBNAIL[i]);
-            post.setImagesUrls(IMAGES_URL[i]);
-            post.setOriginalUrl(ORIGINAL_URL[i]);
-            post.setDate(DATE[i]);
-            post.setCategoryId(CATEGORY_ID[i]);
-            post.setCategoryName(CATEGORY_NAME[i]);
-            post.setLastUpdateDate(LAST_UPDATED[i]);
-            post.setDescription(DESCRIPTION[i]);
-            if (i == 0 || i == 1)
-                post.setFavorite(true);
-            posts.add(post);
-        }
+//        for (int i = 0; i < 4; i++) {
+//            FeaturedEntity post = new FeaturedEntity();
+//            post.setId(i);
+////            post.setOnlineId(ONLINE_ID[i]);
+//            post.setTitle(TITLE_NAME[i]);
+//            post.setAuthor(AUTHOR[i]);
+//            post.setThumbnailUrl(THUMBNAIL[i]);
+//            post.setImagesUrls(IMAGES_URL[i]);
+//            post.setOriginalUrl(ORIGINAL_URL[i]);
+//            post.setDate(DATE[i]);
+//            post.setCategoryId(CATEGORY_ID[i]);
+//            post.setCategoryName(CATEGORY_NAME[i]);
+//            post.setLastUpdateDate(LAST_UPDATED[i]);
+//            post.setDescription(DESCRIPTION[i]);
+//            if (i == 0 || i == 1)
+//                post.setFavorite(true);
+//            posts.add(post);
+//        }
         return posts;
     }
 

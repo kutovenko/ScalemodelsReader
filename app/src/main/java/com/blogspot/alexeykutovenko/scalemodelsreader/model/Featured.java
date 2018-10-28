@@ -1,20 +1,38 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.model;
 
-import java.util.Date;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
 
 public interface Featured {
     int getId();
-    int getOnlineId();
+
+    Author getAuthor();
+
     String getTitle();
-    String getAuthor();
-    String getThumbnailUrl();
-    String getImagesUrls();
+
+    String getLastUpdate();
+
+    //    Category getCategory();
     String getOriginalUrl();
-    Date getDate();
-    int getCategoryId();
-    String getCategoryName();
+
+    String getThumbnailUrl();
+
+    String getPrintingUrl();
+
+    String[] getImagesUrls();
+
+    String getType();
+
+    String getDate();
+
+    String getStoryid();
     String getDescription();
-    Date getLastUpdateDate();
-    boolean getIsFavorite();
+
+    boolean getIsBookmark();
+
+    void setIsBookmark(boolean isBookmark);
+
+    boolean getIsRead();
+
+    void setIsRead(boolean isRead);
 }
 

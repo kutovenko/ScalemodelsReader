@@ -1,15 +1,16 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.db;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.AppExecutors;
@@ -18,15 +19,15 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.ScalemodelsApp;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.converters.DataConverters;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.dao.FeaturedDao;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.dao.PostDao;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.FeaturedEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.FeaturedEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.network.ScalemodelsApi;
 
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-@Database(entities = {PostEntity.class, FeaturedEntity.class}, version = 1)
+@Database(entities = {PostEntity.class, FeaturedEntity.class}, version = 1, exportSchema = false)
 @TypeConverters(DataConverters.class)
 public abstract class AppDatabase extends RoomDatabase {
     private static AppDatabase sInstance;
@@ -72,8 +73,8 @@ public abstract class AppDatabase extends RoomDatabase {
                             DataRepository dataRepository = DataRepository.getInstance(database, scalemodelsApi);
 //                            List<PostEntity> scalematesPosts = dataRepository.getInitialPostsFromScalemodels();
                             List<PostEntity> posts = DataGenerator.generatePosts();
-                            List<FeaturedEntity> featuredEntities = DataGenerator.generateFeatured();
-                            insertData(database, featuredEntities);
+//                            List<FeaturedEntity> featuredEntities = DataGenerator.generateFeatured();
+//                            insertData(database, featuredEntities);
 //                            insertData(database, posts, featuredEntities);
                             // notify that the database was created and it's ready to be used
                             database.setDatabaseCreated();

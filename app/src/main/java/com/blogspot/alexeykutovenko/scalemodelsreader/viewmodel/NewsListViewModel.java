@@ -1,31 +1,29 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel;
 
 import android.app.Application;
-import android.arch.lifecycle.AndroidViewModel;
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.paging.PagedList;
-import android.support.annotation.NonNull;
+
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MediatorLiveData;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.AppExecutors;
+import com.blogspot.alexeykutovenko.scalemodelsreader.DataRepository;
 import com.blogspot.alexeykutovenko.scalemodelsreader.ScalemodelsApp;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.dao.PostDao;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.FeaturedEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
 
 import java.util.List;
 
-public class PostListViewModel extends AndroidViewModel {
+public class NewsListViewModel extends AndroidViewModel {
     private final MediatorLiveData<List<PostEntity>> mObservablePosts;
-    private final MediatorLiveData<List<FeaturedEntity>> mObservableFeatured;
+    private final MediatorLiveData<List<PostEntity>> mObservableFeatured;
     private PostDao postDao;
+    private ScalemodelsApp application;
 
-    ScalemodelsApp application;
-    private LiveData<PagedList<PostEntity>> articleLiveData;
-
-    public PostListViewModel(@NonNull Application application) {
+    public NewsListViewModel(@NonNull Application application) {
         super(application);
         this.application = (ScalemodelsApp) application;
 
@@ -43,7 +41,7 @@ public class PostListViewModel extends AndroidViewModel {
         mObservableFeatured = new MediatorLiveData<>();
         mObservableFeatured.setValue(null);
 
-        LiveData<List<FeaturedEntity>> featureds = ((ScalemodelsApp) application)
+        LiveData<List<PostEntity>> featureds = ((ScalemodelsApp) application)
                 .getRepository()
                 .getAllFeaturedPosts();
         mObservableFeatured.addSource(featureds, mObservableFeatured::setValue);
@@ -60,26 +58,31 @@ public class PostListViewModel extends AndroidViewModel {
     /**
      * Expose the LiveData Featured query so the UI can observe it.
      */
-    public LiveData<List<FeaturedEntity>> getFeaturedEntities() {
+    public LiveData<List<PostEntity>> getFeaturedEntities() {
         return mObservableFeatured;
     }
 
 
     public void updatePost(Post post) {
         new AppExecutors().diskIO().execute(() ->
-            postDao.updatePost(post.getId(), post.getIsBookmark()));
+                postDao.updatePost(post.getId(), post.getIsBookmark()));
     }
 
     public void refreshFeatured() {
         application.getRepository().getScalemodelsFeatured();
-        getFeaturedEntities();
     }
 
     public void refreshPosts() {
-        application.getRepository().getScalemodelsUpdates();
-        Log.d("DATABASE R repo", " Connect");
+        Log.d("DATABASE R repo", " Refresh");
+        application.getRepository().getScalemodelsPosts();
+    }
 
-//        mObservablePosts.postValue(application.getRepository().getScalemodelsUpdates());
-        getPosts();
+    /**
+     * Method for paging library
+     *
+     * @return Data Repository instance.
+     */
+    public DataRepository getRepository() {
+        return application.getRepository();
     }
 }

@@ -1,17 +1,17 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.ui.adapters;
 
-import android.arch.paging.PagedListAdapter;
-import android.databinding.DataBindingUtil;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import androidx.paging.PagedListAdapter;
+import androidx.databinding.DataBindingUtil;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.R;
 import com.blogspot.alexeykutovenko.scalemodelsreader.databinding.ItemPostBinding;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.BookmarkClickCallback;
 import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback;
 
