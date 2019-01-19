@@ -1,4 +1,4 @@
-package com.blogspot.alexeykutovenko.scalemodelsreader.ui.adapters;
+package com.blogspot.alexeykutovenko.scalemodelsreader.ui.adapter;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.annotation.NonNull;
@@ -15,8 +15,8 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.databinding.ItemPostBindin
 //import com.blogspot.alexeykutovenko.scalemodelsreader.databinding.ItemPostBinding;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback;
-import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.BookmarkClickCallback;
+import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback.PostClickCallback;
+import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback.BookmarkClickCallback;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,49 +27,91 @@ import java.util.Objects;
 
 public class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.BookmarksViewHolder>
         implements Filterable {
-    private List<? extends Post> mBookmarksList;
-    private List<PostEntity> mFilteredBookmarks = new ArrayList<>();
+    private List<? extends Post> bookmarks;
+    private List<PostEntity> filteredBookmarks = new ArrayList<>();
 
     @Nullable
-    private final PostClickCallback mPostClickCallback;
-    private final BookmarkClickCallback mBookmarkClickCallback;
+    private final PostClickCallback postClickCallback;
+    private final BookmarkClickCallback bookmarkClickCallback;
 
 
     public BookmarksAdapter(@Nullable PostClickCallback clickCallback,
-                            @Nullable BookmarkClickCallback mBookmarkClickCallback) {
-        this.mPostClickCallback = clickCallback;
-        this.mBookmarkClickCallback = mBookmarkClickCallback;
+                            @Nullable BookmarkClickCallback bookmarkClickCallback) {
+        this.postClickCallback = clickCallback;
+        this.bookmarkClickCallback = bookmarkClickCallback;
         setHasStableIds(true);
     }
 
-    public void setBookmarksList(final List<? extends Post> bookmarksList) {
-        if (mBookmarksList == null) {
-            mBookmarksList = bookmarksList;
-            mFilteredBookmarks.addAll((Collection<? extends PostEntity>) mBookmarksList);
-            notifyItemRangeInserted(0, bookmarksList.size());
+
+    static class BookmarksViewHolder extends RecyclerView.ViewHolder {
+        final ItemPostBinding binding;
+        int position;
+
+        BookmarksViewHolder(ItemPostBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+            this.position = getAdapterPosition();
+        }
+    }
+
+
+    @NonNull
+    @Override
+    public BookmarksViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
+                                                  int position) {
+        ItemPostBinding binding = DataBindingUtil
+                .inflate(LayoutInflater.from(viewGroup.getContext()), R.layout.item_post,
+                        viewGroup, false);
+        binding.setCallback(postClickCallback);
+        binding.setBookmarkCallback(bookmarkClickCallback);
+        return new BookmarksViewHolder(binding);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull BookmarksViewHolder bookmarksViewHolder,
+                                 int position) {
+        bookmarksViewHolder.binding.setPost(filteredBookmarks.get(position));
+        bookmarksViewHolder.binding.executePendingBindings();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemCount() {
+        return filteredBookmarks == null ? 0 : filteredBookmarks.size();
+    }
+
+
+    public void setBookmarks(final List<? extends Post> bookmarks) {
+        if (this.bookmarks == null) {
+            this.bookmarks = bookmarks;
+            filteredBookmarks.addAll((Collection<? extends PostEntity>) this.bookmarks);
+            notifyItemRangeInserted(0, bookmarks.size());
         } else {
-            // TODO: 02.10.2018 optimize differs
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
                 @Override
                 public int getOldListSize() {
-                    return mFilteredBookmarks.size();
+                    return filteredBookmarks.size();
                 }
 
                 @Override
                 public int getNewListSize() {
-                    return bookmarksList.size();
+                    return bookmarks.size();
                 }
 
                 @Override
                 public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return mFilteredBookmarks.get(oldItemPosition).getId() ==
-                            bookmarksList.get(newItemPosition).getId();
+                    return filteredBookmarks.get(oldItemPosition).getId() ==
+                            bookmarks.get(newItemPosition).getId();
                 }
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    Post newPost = bookmarksList.get(newItemPosition);
-                    Post oldPost = mFilteredBookmarks.get(oldItemPosition);
+                    Post newPost = bookmarks.get(newItemPosition);
+                    Post oldPost = filteredBookmarks.get(oldItemPosition);
                     return newPost.getId() == oldPost.getId()
                             && Objects.equals(newPost.getStoryid(), oldPost.getStoryid())
                             && Objects.equals(newPost.getTitle(), oldPost.getTitle())
@@ -84,63 +126,19 @@ public class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Book
                             && Objects.equals(newPost.getIsBookmark(), oldPost.getIsBookmark());
                 }
             });
-            mFilteredBookmarks = (List<PostEntity>) bookmarksList;
+            filteredBookmarks = (List<PostEntity>) bookmarks;
             result.dispatchUpdatesTo(this);
         }
     }
 
-    @NonNull
-    @Override
-    public BookmarksViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup,
-                                                  int position) {
-        ItemPostBinding binding = DataBindingUtil
-                .inflate(LayoutInflater.from(viewGroup.getContext()), R.layout.item_post,
-                        viewGroup, false);
-        binding.setCallback(mPostClickCallback);
-        binding.setBookmarkCallback(mBookmarkClickCallback);
-        return new BookmarksViewHolder(binding);
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull BookmarksViewHolder bookmarksViewHolder,
-                                 int position) {
-        bookmarksViewHolder.binding.setPost(mFilteredBookmarks.get(position));
-        bookmarksViewHolder.binding.executePendingBindings();
-    }
-
-    @Override
-    public long getItemId(int position) {
-        return position;
-    }
-
-    @Override
-    public int getItemCount() {
-        return mFilteredBookmarks == null ? 0 : mFilteredBookmarks.size();
-    }
-
-    public List<PostEntity> getPosts() {
-        return mFilteredBookmarks;
-    }
-
     public void sortByTitle() {
-        mFilteredBookmarks.sort(Comparator.comparing(PostEntity::getTitle));
-        notifyItemRangeChanged(0, mFilteredBookmarks.size());
+        filteredBookmarks.sort(Comparator.comparing(PostEntity::getTitle));
+        notifyItemRangeChanged(0, filteredBookmarks.size());
     }
 
     public void sortByDate() {
-        mFilteredBookmarks.sort(Comparator.comparing(PostEntity::getDate).reversed());
-        notifyItemRangeChanged(0, mFilteredBookmarks.size());
-    }
-
-    static class BookmarksViewHolder extends RecyclerView.ViewHolder {
-        final ItemPostBinding binding;
-        int position;
-
-        BookmarksViewHolder(ItemPostBinding binding) {
-            super(binding.getRoot());
-            this.binding = binding;
-            this.position = getAdapterPosition();
-        }
+        filteredBookmarks.sort(Comparator.comparing(PostEntity::getDate).reversed());
+        notifyItemRangeChanged(0, filteredBookmarks.size());
     }
 
     @Override
@@ -151,13 +149,12 @@ public class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Book
                 String charString = charSequence.toString();
                 List<Post> filteredList = new ArrayList<>();
                 if (charString.isEmpty()) {
-                    filteredList = (List<Post>) mBookmarksList;
+                    filteredList = (List<Post>) bookmarks;
                 } else {
-                    for (Post row : mBookmarksList) {
+                    for (Post row : bookmarks) {
                         if (row.getTitle().toLowerCase().contains(charString.toLowerCase())
                                 || row.getAuthor().getName().toLowerCase()
                                 .contains(charString.toLowerCase())) {
-                            // TODO: 26.10.2018 other conditions
                             filteredList.add(row);
                         }
                     }
@@ -170,11 +167,9 @@ public class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Book
 
             @Override
             protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-                mFilteredBookmarks = (List<PostEntity>) filterResults.values;
+                filteredBookmarks = (List<PostEntity>) filterResults.values;
                 notifyDataSetChanged();
-                // TODO: 26.10.2018 notifydatarange
             }
         };
     }
-
 }

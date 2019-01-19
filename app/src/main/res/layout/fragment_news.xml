@@ -8,7 +8,7 @@
         <variable name="post"
             type="com.blogspot.alexeykutovenko.scalemodelsreader.model.Post"/>
         <variable name="callback"
-            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback"/>
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback.PostClickCallback" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -47,8 +47,10 @@
                         android:layout_marginLeft="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginRight="8dp"
-                        android:contentDescription="Featured list"
-                        app:layoutManager="LinearLayoutManager"
+                        android:contentDescription="@string/featured_list"
+                        android:scrollbarSize="5dp"
+                        android:scrollbarThumbVertical="@color/colorPrimary"
+                        android:scrollbars="vertical"
                         app:visibleGone="@{!isLoading}" />
 
                 </LinearLayout>
@@ -59,23 +61,18 @@
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPostList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvPostList"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="Post list"
-                    android:layoutAnimation="@anim/layout_animation_fall_down"
-                    app:layoutManager="LinearLayoutManager"
-                    app:visibleGone="@{!isLoading}" />
-            </androidx.appcompat.widget.LinearLayoutCompat>
+                android:layout_alignParentTop="true"
+                android:background="@color/colorWhite"
+                android:contentDescription="@string/post_list"
+                android:layoutAnimation="@anim/layout_animation_fall_down"
+                android:scrollbars="vertical" />
 
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

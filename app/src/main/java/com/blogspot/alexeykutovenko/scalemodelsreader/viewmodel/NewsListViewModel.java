@@ -2,87 +2,91 @@ package com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel;
 
 import android.app.Application;
 
+import com.blogspot.alexeykutovenko.scalemodelsreader.MyApp;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
+
+import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
-import androidx.annotation.NonNull;
-import android.util.Log;
-
-import com.blogspot.alexeykutovenko.scalemodelsreader.AppExecutors;
-import com.blogspot.alexeykutovenko.scalemodelsreader.DataRepository;
-import com.blogspot.alexeykutovenko.scalemodelsreader.ScalemodelsApp;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.dao.PostDao;
-import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
-
-import java.util.List;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Transformations;
 
 public class NewsListViewModel extends AndroidViewModel {
-    private final MediatorLiveData<List<PostEntity>> mObservablePosts;
-    private final MediatorLiveData<List<PostEntity>> mObservableFeatured;
-    private PostDao postDao;
-    private ScalemodelsApp application;
 
-    public NewsListViewModel(@NonNull Application application) {
+    private final MediatorLiveData<List<PostEntity>> observableFeatureds;
+    private final MediatorLiveData<List<PostEntity>> observableNews;
+    private MutableLiveData<Set<Category>> liveCategoryTrigger;
+    private MyApp application;
+
+    NewsListViewModel(@NonNull Application application) {
         super(application);
-        this.application = (ScalemodelsApp) application;
-
-        postDao = ((ScalemodelsApp) application)
-                .getDatabase().postDao();
-
-        mObservablePosts = new MediatorLiveData<>();
-        mObservablePosts.setValue(null);
-
-        LiveData<List<PostEntity>> posts = ((ScalemodelsApp) application)
-                .getRepository()
-                .getPosts();
-        mObservablePosts.addSource(posts, mObservablePosts::setValue);
-
-        mObservableFeatured = new MediatorLiveData<>();
-        mObservableFeatured.setValue(null);
-
-        LiveData<List<PostEntity>> featureds = ((ScalemodelsApp) application)
+        this.application = (MyApp) application;
+        observableFeatureds = new MediatorLiveData<>();
+        observableFeatureds.setValue(null);
+        LiveData<List<PostEntity>> featureds = ((MyApp) application)
                 .getRepository()
                 .getAllFeaturedPosts();
-        mObservableFeatured.addSource(featureds, mObservableFeatured::setValue);
+        observableFeatureds.addSource(featureds, observableFeatureds::setValue);
 
+        liveCategoryTrigger = new MutableLiveData<>();
+        liveCategoryTrigger.setValue(loadCategories());
+
+        observableNews = new MediatorLiveData<>();
+        observableNews.setValue(null);
+        if (Objects.requireNonNull(liveCategoryTrigger.getValue()).size() == 0) {
+            LiveData<List<PostEntity>> news = Transformations.switchMap(liveCategoryTrigger, choosedCategories ->
+                    ((MyApp) application)
+                            .getRepository()
+                            .getLivedataForNews());
+            observableNews.addSource(news, observableNews::setValue);
+        } else {
+            LiveData<List<PostEntity>> news = Transformations.switchMap(liveCategoryTrigger, choosedCategories ->
+                    ((MyApp) application)
+                            .getRepository()
+                            .getLivedataForCategory(choosedCategories));
+            observableNews.addSource(news, observableNews::setValue);
+        }
     }
 
     /**
-     * Expose the LiveData Posts query so the UI can observe it.
+     * Updates categories list and triggers switching data source in News LiveData
+     * @param categories set of categories codes.
      */
-    public LiveData<List<PostEntity>> getPosts() {
-        return mObservablePosts;
+    public void setCategory(Set<Category> categories) {
+        liveCategoryTrigger.setValue(categories);
     }
 
     /**
      * Expose the LiveData Featured query so the UI can observe it.
      */
-    public LiveData<List<PostEntity>> getFeaturedEntities() {
-        return mObservableFeatured;
+    public Set<Category> loadCategories() {
+        return new TreeSet<>(application.getRepository().getCategories());
     }
 
+    public MutableLiveData<Set<Category>> getLiveCategories() {
+        return liveCategoryTrigger;
+    }
 
-    public void updatePost(Post post) {
-        new AppExecutors().diskIO().execute(() ->
-                postDao.updatePost(post.getId(), post.getIsBookmark()));
+    public LiveData<List<PostEntity>> getNews() {
+        return observableNews;
+    }
+
+    public LiveData<List<PostEntity>> getFeatureds() {
+        return observableFeatureds;
     }
 
     public void refreshFeatured() {
         application.getRepository().getScalemodelsFeatured();
     }
 
-    public void refreshPosts() {
-        Log.d("DATABASE R repo", " Refresh");
-        application.getRepository().getScalemodelsPosts();
-    }
-
-    /**
-     * Method for paging library
-     *
-     * @return Data Repository instance.
-     */
-    public DataRepository getRepository() {
-        return application.getRepository();
+    public int refreshPosts() {
+        return application.getRepository().getScalemodelsPosts(getApplication().getApplicationContext());
     }
 }

@@ -1,41 +1,33 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.db.entity;
 
-import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.MyAppConctants;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.StringUtils;
 
+
+/**
+ * Class for Scalemodels Authors
+ */
 public class Author
 {
     private String uid;
 
     private String name;
 
-    public String getUid ()
-    {
-        return uid;
-    }
-
-    public void setUid (String uid)
-    {
-        this.uid = uid;
-    }
-
-    public String getName ()
-    {
+    public String getName () {
         return name;
     }
 
-    public void setName (String name)
-    {
-        this.name = name;
+    public void setName (String name) {
+        this.name = StringUtils.unescapeHtml3(name);
     }
 
     public Author (String uid, String name){
         this.uid = uid;
-        this.name = name;
+        this.name = StringUtils.unescapeHtml3(name);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return uid + MyAppConctants.STRING_SEPARATOR + name;
     }
 }

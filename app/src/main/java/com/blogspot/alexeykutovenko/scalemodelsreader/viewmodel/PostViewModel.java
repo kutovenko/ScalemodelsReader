@@ -1,34 +1,34 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
+import com.blogspot.alexeykutovenko.scalemodelsreader.AppExecutors;
+import com.blogspot.alexeykutovenko.scalemodelsreader.DataRepository;
+import com.blogspot.alexeykutovenko.scalemodelsreader.MyApp;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.dao.PostDao;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
+import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.ObservableField;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.databinding.ObservableField;
-import androidx.annotation.NonNull;
-
-import com.blogspot.alexeykutovenko.scalemodelsreader.DataRepository;
-import com.blogspot.alexeykutovenko.scalemodelsreader.ScalemodelsApp;
-import com.blogspot.alexeykutovenko.scalemodelsreader.model.FeaturedEntity;
-import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 
 public class PostViewModel extends AndroidViewModel {
     public ObservableField<PostEntity> post = new ObservableField<>();
-    public ObservableField<FeaturedEntity> featured = new ObservableField<>();
-    private LiveData<PostEntity> mObservablePost;
-    private final int mPostId;
+    private LiveData<PostEntity> observablePost;
 
-    public PostViewModel(@NonNull Application application, DataRepository repository,
-                         final int postId) {
+    private PostViewModel(@NonNull Application application, DataRepository repository,
+                          final long postId) {
         super(application);
-        mPostId = postId;
-        mObservablePost = repository.loadPost(mPostId);
+        observablePost = repository.loadPost(postId);
     }
 
     public LiveData<PostEntity> getObservablePost() {
-        return mObservablePost;
+        return observablePost;
     }
 
     public void setPost(PostEntity post) {
@@ -37,21 +37,28 @@ public class PostViewModel extends AndroidViewModel {
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         @NonNull
-        private final Application mApplication;
-        private final int mPostId;
+        private final Application application;
+        private final long postId;
 
-        private final DataRepository mRepository;
+        private final DataRepository repository;
 
-        public Factory(@NonNull Application application, int postId) {
-            mApplication = application;
-            mPostId = postId;
-            mRepository = ((ScalemodelsApp) application).getRepository();
+        public Factory(@NonNull Application application, long postId) {
+            this.application = application;
+            this.postId = postId;
+            repository = ((MyApp) application).getRepository();
         }
 
+        @NonNull
         @Override
-        public <T extends ViewModel> T create(Class<T> modelClass) {
+        public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             //noinspection unchecked
-            return (T) new PostViewModel(mApplication, mRepository, mPostId);
+            return (T) new PostViewModel(application, repository, postId);
         }
+    }
+
+    public void updatePost(Post post) {
+        @SuppressLint("VisibleForTests") PostDao postDao = ((MyApp) getApplication()).getDatabase().postDao();
+        new AppExecutors().diskIO().execute(() ->
+                postDao.updatePost(post.getId(), post.getIsBookmark()));
     }
 }

@@ -1,37 +1,42 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.AppDatabase;
 import com.blogspot.alexeykutovenko.scalemodelsreader.network.RestApiFactory;
 import com.blogspot.alexeykutovenko.scalemodelsreader.network.ScalemodelsApi;
 
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-
 /**
  * Android Application class. Used for accessing singletons.
  */
-public class ScalemodelsApp extends Application {
+public class MyApp extends Application {
 
-    private AppExecutors mAppExecutors;
+    private AppExecutors appExecutors;
     private ScalemodelsApi scalemodelsApi;
+    private Context context;
+
+    public Context getContext() {
+        return context;
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        mAppExecutors = new AppExecutors();
+        appExecutors = new AppExecutors();
+        context = getApplicationContext();
     }
 
     public AppDatabase getDatabase() {
-        return AppDatabase.getInstance(this, mAppExecutors);
+        return AppDatabase.getInstance(this, appExecutors);
     }
 
     public DataRepository getRepository() {
         return DataRepository.getInstance(getDatabase(), getScalemodelsApi());
     }
-//retrofit
+
+    //for Retrofit
     public ScalemodelsApi getScalemodelsApi(){
         if(scalemodelsApi == null) {
             scalemodelsApi = RestApiFactory.create();

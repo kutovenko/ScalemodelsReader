@@ -1,5 +1,6 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.lifecycle.AndroidViewModel;
@@ -11,7 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.AppExecutors;
 import com.blogspot.alexeykutovenko.scalemodelsreader.DataRepository;
-import com.blogspot.alexeykutovenko.scalemodelsreader.ScalemodelsApp;
+import com.blogspot.alexeykutovenko.scalemodelsreader.MyApp;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.dao.PostDao;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
@@ -19,71 +20,41 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
 import java.util.List;
 
 public class BookmarksListViewModel extends AndroidViewModel {
-    private final MediatorLiveData<List<PostEntity>> mObservableBookmarks; // == filteredData
-    private LiveData<List<PostEntity>> mAllBookmarks;
-
+    private final MediatorLiveData<List<PostEntity>> observableBookmarks;
     private PostDao postDao;
-    ////
 
-    private LiveData<List<PostEntity>> mSearchByLiveData;
-    private MutableLiveData<String> mFilteredLiveData = new MutableLiveData<>();
-
+    @SuppressLint("VisibleForTests")
     public BookmarksListViewModel(@NonNull Application application) {
         super(application);
-        postDao = ((ScalemodelsApp) application).getDatabase().postDao();
+        postDao = ((MyApp) application).getDatabase().postDao();
 
-        mObservableBookmarks = new MediatorLiveData<>();
-        mObservableBookmarks.setValue(null);
-        LiveData<List<PostEntity>> allBookmarks = ((ScalemodelsApp) application)
+        observableBookmarks = new MediatorLiveData<>();
+        observableBookmarks.setValue(null);
+        LiveData<List<PostEntity>> allBookmarks = ((MyApp) application)
                 .getRepository()
                 .getAllBookmarks();
 
 
-        mObservableBookmarks.addSource(allBookmarks, mObservableBookmarks::setValue);
+        observableBookmarks.addSource(allBookmarks, observableBookmarks::setValue);
 
-        DataRepository dataRepository = ((ScalemodelsApp) application)
-                .getRepository();
-        mAllBookmarks = ((ScalemodelsApp) application)
-                .getRepository()
-                .getAllBookmarks();
+        DataRepository dataRepository = ((MyApp) application).getRepository();
 
-        mSearchByLiveData = Transformations.switchMap(mFilteredLiveData, //?
-                v -> dataRepository.filterBookmarks(v));
-
+        MutableLiveData<String> filteredBookmarks = new MutableLiveData<>();
+        LiveData<List<PostEntity>> searchedBookmarks = Transformations.switchMap(filteredBookmarks,
+                dataRepository::filterBookmarks);
     }
 
-
-    public LiveData<List<PostEntity>> getSearchBy() {
-        return mSearchByLiveData;
-    }
 
     public void setFilter(String filter) {
         new AppExecutors().diskIO().execute(() ->
-                postDao.filterBookmarks(filter));
+                postDao.loadFilteredBookmarks(filter));
     }
-
-    LiveData<List<PostEntity>> getAllBookmarks() {
-        return mAllBookmarks;
-    }
-
 
     public LiveData<List<PostEntity>> getBookmarks() {
-        return mObservableBookmarks;
+        return observableBookmarks;
     }
 
     public void updatePost(Post post) {new AppExecutors().diskIO().execute(() ->
             postDao.updatePost(post.getId(), post.getIsBookmark()));
     }
-
-    public void sortByDate() {
-    }
-
-//
-//    public void removeBookmark(long id) {new AppExecutors().diskIO().execute(() ->
-//            postDao.updateBookmark(id, false));
-//    }
-//
-//    public void setBookmark(long id) {new AppExecutors().diskIO().execute(() ->
-//            postDao.updateBookmark(id, true));
-//    }
 }

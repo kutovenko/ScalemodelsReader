@@ -6,7 +6,7 @@
     app:startDestination="@id/newsFragment">
     <fragment
         android:id="@+id/archiveFragment"
-        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.SettingsFragment"
+        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragment.SettingsFragment"
         android:label="fragment_archive"
         tools:layout="@layout/fragment_settings">
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/favoritesFragment"
-        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.BookmarksFragment"
+        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragment.BookmarksFragment"
         android:label="fragment_favorites"
         tools:layout="@layout/fragment_bookmarks" >
         <action
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/newsFragment"
-        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.NewsFragment"
+        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragment.NewsFragment"
         android:label="fragment_news"
         tools:layout="@layout/fragment_news" >
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/postFragment"
-        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.PostFragment"
+        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragment.PostFragment"
         android:label="fragment_post"
         tools:layout="@layout/fragment_post" >
         <action
@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/webviewFragment"
-        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments.WebviewFragment"
+        android:name="com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragment.WebviewFragment"
         android:label="fragment_webview"
         tools:layout="@layout/fragment_webview" />
 </navigation>

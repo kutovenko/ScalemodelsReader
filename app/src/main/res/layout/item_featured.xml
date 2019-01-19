@@ -7,7 +7,7 @@
             name="post"
             type="com.blogspot.alexeykutovenko.scalemodelsreader.model.Post" />
         <variable name="callback"
-            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback" />
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback.PostClickCallback" />
     </data>
 
     <androidx.cardview.widget.CardView

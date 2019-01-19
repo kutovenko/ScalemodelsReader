@@ -6,7 +6,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        tools:context=".ui.fragments.WebviewFragment">
+        tools:context=".ui.fragment.WebviewFragment">
 
         <ProgressBar
             android:id="@+id/pbLoadStatus"

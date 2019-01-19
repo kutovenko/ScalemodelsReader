@@ -5,24 +5,24 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 
 //import com.blogspot.alexeykutovenko.scalemodelsreader.BR;
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.converters.DataConverters;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.converter.DataConverters;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
 @Entity(tableName = "featured")
 public class FeaturedEntity extends BaseObservable implements Featured, Serializable {
-    @PrimaryKey(autoGenerate = true)           // Room annotation
-    private int id;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
 
     @ColumnInfo(name = "author")
-    @SerializedName("author") //to plain
+    @SerializedName("author")
     @TypeConverters({DataConverters.class})
     private Author author;
 
@@ -33,11 +33,6 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
     @ColumnInfo(name = "last_update")
     @SerializedName("last_update")
     private String lastUpdate;
-
-//    @ColumnInfo(name = "category") //to plain
-//    @SerializedName("category")
-//    @TypeConverters({DataConverters.class})
-//    private Category category;
 
     @ColumnInfo(name = "original_url")
     @SerializedName("original_url")
@@ -52,7 +47,7 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
     private String printingUrl;
 
     @ColumnInfo(name = "images")
-    @SerializedName("images") //to plain
+    @SerializedName("images")
     @TypeConverters({DataConverters.class})
     private String[] imagesUrls;
 
@@ -62,7 +57,7 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
 
     @ColumnInfo(name = "date")
     @SerializedName("date")
-    @TypeConverters({DataConverters.class})//?
+    @TypeConverters({DataConverters.class})
     private String date;
 
     @ColumnInfo(name = "storyid")
@@ -80,7 +75,7 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
     private boolean isRead;
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -103,7 +98,7 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = StringUtils.unescapeHtml3(title);
     }
 
     @Override
@@ -184,11 +179,10 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
     }
 
     public void setDescription(String description) {
-        this.description = description;
+        this.description = StringUtils.unescapeHtml3(description);
     }
 
     @Override
-//    @Bindable
     public boolean getIsBookmark() {
         return isBookmark;
     }
@@ -196,7 +190,6 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
     @Override
     public void setIsBookmark(boolean isBookmark) {
         this.isBookmark = isBookmark;
-//        notifyPropertyChanged(BR.isBookmark);
     }
 
     @Override
@@ -211,16 +204,14 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
 
 
     public FeaturedEntity() {
-
     }
 
 
     public FeaturedEntity(FeaturedEntity post) {
         this.id = post.getId();
         this.author = post.getAuthor();
-        this.title = post.getTitle();
+        this.title = StringUtils.unescapeHtml3(post.getTitle());
         this.lastUpdate = post.getLastUpdate();
-//        this.category = post.getCategory();
         this.originalUrl = post.getOriginalUrl();
         this.thumbnailUrl = post.getThumbnailUrl();
         this.printingUrl = post.getPrintingUrl();
@@ -228,7 +219,7 @@ public class FeaturedEntity extends BaseObservable implements Featured, Serializ
         this.type = post.getType();
         this.date = post.getDate();
         this.storyid = post.getStoryid();
-        this.description = post.getDescription();
+        this.description = StringUtils.unescapeHtml3(post.getDescription());
         this.isBookmark = post.getIsBookmark();
         this.isRead = post.getIsRead();
 

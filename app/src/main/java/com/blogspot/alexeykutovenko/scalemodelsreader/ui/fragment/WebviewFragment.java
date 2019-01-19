@@ -1,5 +1,6 @@
-package com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragments;
+package com.blogspot.alexeykutovenko.scalemodelsreader.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 
 import androidx.databinding.DataBindingUtil;
@@ -25,7 +26,9 @@ import android.webkit.WebViewClient;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.R;
 import com.blogspot.alexeykutovenko.scalemodelsreader.databinding.FragmentWebviewBinding;
-import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.MyAppConctants;
+
+import java.util.Objects;
 
 /**
  * Simple browser with WebView. Correctly navigates with back button. Default textScale percent for
@@ -33,43 +36,45 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.utilities.MyAppConctants;
  */
 
 public class WebviewFragment extends Fragment {
-    private FragmentWebviewBinding mBinding;
+    private FragmentWebviewBinding binding;
     private WebSettings webSettings;
 
     public WebviewFragment() {
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mBinding = DataBindingUtil
+        binding = DataBindingUtil
                 .inflate(inflater, R.layout.fragment_webview, container, false);
         setHasOptionsMenu(true);
-        getActivity().setTitle("");
-        mBinding.pbLoadStatus.setIndeterminate(true);
+        Objects.requireNonNull(getActivity()).setTitle("");
+        binding.pbLoadStatus.setIndeterminate(true);
 
 
-        String url = getArguments().getString(MyAppConctants.PRINTING_URL);
-        mBinding.wvBrowse.setWebViewClient(new MyWebViewClient() {
+        assert getArguments() != null;
+        String url = getArguments().getString(MyAppConctants.PRINTING_URL, "");
+        binding.wvBrowse.setWebViewClient(new MyWebViewClient() {
             public void onPageFinished(WebView view, String url) {
-                mBinding.pbLoadStatus.setVisibility(View.GONE);
+                binding.pbLoadStatus.setVisibility(View.GONE);
             }
 
         });
-        webSettings = mBinding.wvBrowse.getSettings();
+        webSettings = binding.wvBrowse.getSettings();
         int textScalePercent = 30;
         webSettings.setTextZoom(textScalePercent);
         webSettings.setJavaScriptEnabled(true);
 
-        mBinding.wvBrowse.loadUrl(url);
+        binding.wvBrowse.loadUrl(url);
 
-        mBinding.wvBrowse.setOnKeyListener((v, keyCode, event) -> {
+        binding.wvBrowse.setOnKeyListener((v, keyCode, event) -> {
             if (event.getAction()!= KeyEvent.ACTION_DOWN)
                 return true;
 
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (mBinding.wvBrowse.canGoBack()) {
-                    mBinding.wvBrowse.goBack();
+                if (binding.wvBrowse.canGoBack()) {
+                    binding.wvBrowse.goBack();
                 } else {
                     getActivity().onBackPressed();
                 }
@@ -78,7 +83,7 @@ public class WebviewFragment extends Fragment {
             return false;
         });
 
-        return mBinding.getRoot();
+        return binding.getRoot();
     }
 
     @Override
@@ -87,9 +92,10 @@ public class WebviewFragment extends Fragment {
         inflater.inflate(R.menu.webview, menu);
 
         MenuItem openInChrome = menu.findItem(R.id.miChrome);
+        assert getArguments() != null;
         String url = getArguments().getString(MyAppConctants.ORIGINAL_URL);
         openInChrome.setOnMenuItemClickListener(item -> {
-            mBinding.wvBrowse.getContext().startActivity(
+            binding.wvBrowse.getContext().startActivity(
                     new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
             return false;
         });

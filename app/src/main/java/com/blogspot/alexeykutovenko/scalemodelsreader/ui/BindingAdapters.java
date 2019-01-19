@@ -28,9 +28,8 @@ public class BindingAdapters {
 
     /**
      * Connects Glide library and bindings.
-     *
      * @param imageView view for the image.
-     * @param url       address of the online image.
+     * @param url url of the online image.
      */
     @BindingAdapter("thumbnailUrl")
     public static void setImageUrl(ImageView imageView, String url) {
@@ -49,8 +48,7 @@ public class BindingAdapters {
         Glide.with(context)
                 .load(url)
                 .apply(new RequestOptions().placeholder(R.drawable.scalemodels_logo_grey)
-                        .error(R.drawable.scalemodels_logo_grey)
-                        .fitCenter())
+                        .error(R.drawable.scalemodels_logo_grey))
                 .into(imageView);
     }
 }

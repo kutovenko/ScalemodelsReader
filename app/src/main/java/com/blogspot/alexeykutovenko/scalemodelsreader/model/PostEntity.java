@@ -1,20 +1,9 @@
 package com.blogspot.alexeykutovenko.scalemodelsreader.model;
 
-import androidx.databinding.library.baseAdapters.BR;
-import androidx.room.ColumnInfo;
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
-import androidx.databinding.BaseObservable;
-import androidx.databinding.Bindable;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-
-import android.util.Log;
-
-import com.blogspot.alexeykutovenko.scalemodelsreader.db.converters.DataConverters;
+import com.blogspot.alexeykutovenko.scalemodelsreader.db.converter.DataConverters;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.StringUtils;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -22,18 +11,26 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-//import static com.blogspot.alexeykutovenko.scalemodelsreader.BR.*;
+import androidx.annotation.NonNull;
+import androidx.databinding.BaseObservable;
+import androidx.databinding.Bindable;
+import androidx.databinding.library.baseAdapters.BR;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 /**
  * Main Entity class for all the posts from Scalemodels.
- * Two sets of annotations used: one for Room and another for Retfofit.
+ * Two sets of annotations used: one for Room and another for Retfofit:
  * Room annotation
  * Gson annotation
  */
 @Entity (tableName = "posts")
 public class PostEntity extends BaseObservable implements Post, Serializable {
-    @PrimaryKey(autoGenerate = true)// Room annotation
-    private int id;
+    @PrimaryKey(autoGenerate = true)
+    private long id;
 
     @ColumnInfo(name = "author")
     @SerializedName("author")
@@ -97,10 +94,11 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     private String convertedDate;
 
     @Override
-    public int getId() {
+    public long getId() {
         return id;
     }
-    public void setId(int id) {
+
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -121,7 +119,7 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     }
     public void setTitle (String title)
     {
-        this.title = title;
+        this.title = StringUtils.unescapeHtml3(title);
     }
 
     @Override
@@ -221,7 +219,7 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     }
     public void setDescription (String description)
     {
-        this.description = description;
+        this.description = StringUtils.unescapeHtml3(description);
     }
 
     @Override
@@ -259,9 +257,7 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
         Calendar calendar = Calendar.getInstance();
         long longDate = Long.parseLong(unixDate) * 1000L;
         calendar.setTimeInMillis(longDate);
-        String reportDate = df.format(calendar.getTime());
-        Log.d("Datetime ", reportDate);
-        return reportDate;
+        return df.format(calendar.getTime());
     }
 
     public PostEntity() {
@@ -270,7 +266,7 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
     public PostEntity(Post post) {
         this.id = post.getId();
         this.author = post.getAuthor();
-        this.title = post.getTitle();
+        this.title = StringUtils.unescapeHtml3(post.getTitle());
         this.lastUpdate = post.getLastUpdate();
         this.category = post.getCategory();
         this.originalUrl = post.getOriginalUrl();
@@ -280,7 +276,7 @@ public class PostEntity extends BaseObservable implements Post, Serializable {
         this.type = post.getType();
         this.date = post.getDate();
         this.storyid = post.getStoryid();
-        this.description = post.getDescription();
+        this.description = StringUtils.unescapeHtml3(post.getDescription());
         this.isBookmark = post.getIsBookmark();
         this.isFeatured = post.getIsFeatured();
     }

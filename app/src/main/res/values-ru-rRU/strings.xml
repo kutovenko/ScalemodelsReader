@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ScalemodelsReader</string>
+    <string name="title_news">Новости</string>
+    <string name="read_full_article">Читать статью целиком</string>
+    <string name="bookmarks">Закладки</string>
+    <string name="title_bookmarks">Закладки</string>
+    <string name="undo">ОТМЕНИТЬ</string>
+    <string name="title_settings">Настройки</string>
+    <string name="scale">Масштаб</string>
+    <string name="sort">Сортировка</string>
+    <string name="sort_by_date">Сортировать по дате</string>
+    <string name="sort_by_title">Сортировать по имени</string>
+    <string name="filter">Фильтр</string>
+    <string name="All">Все категории</string>
+    <string name="bookmark_deleted">Закладка удалена</string>
+    <string name="no_internet_connection">Отсутствует соединение с интернетом!</string>
+    <string name="auto">Автоматически</string>
+    <string name="two_weeks">Две недели</string>
+    <string name="one_week">Одна неделя</string>
+    <string name="channel_description">Уведомления о новостях</string>
+    <string name="post_list">Публикации</string>
+    <string name="featured_list">Рекомендации</string>
+    <string name="news_notification">%d новых публикаций на %s</string>
+</resources>

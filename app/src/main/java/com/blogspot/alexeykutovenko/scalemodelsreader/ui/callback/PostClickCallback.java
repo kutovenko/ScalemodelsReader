@@ -1,4 +1,4 @@
-package com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks;
+package com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.Post;
 

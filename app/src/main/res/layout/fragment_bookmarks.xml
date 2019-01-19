@@ -13,11 +13,11 @@
 
         <variable
             name="callback"
-            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.PostClickCallback" />
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback.PostClickCallback" />
 
         <variable
             name="bookmarkCallback"
-            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callbacks.BookmarkClickCallback" />
+            type="com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback.BookmarkClickCallback" />
     </data>
 
 
@@ -43,6 +43,8 @@
             android:id="@+id/rvFavoritesPostList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:background="@color/colorWhite"
             android:contentDescription="@string/list_of_saved_items"
             android:layoutAnimation="@anim/layout_animation_fall_down"
             app:layoutManager="LinearLayoutManager"

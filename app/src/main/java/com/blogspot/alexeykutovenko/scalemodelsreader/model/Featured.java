@@ -3,7 +3,7 @@ package com.blogspot.alexeykutovenko.scalemodelsreader.model;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
 
 public interface Featured {
-    int getId();
+    long getId();
 
     Author getAuthor();
 
@@ -11,7 +11,6 @@ public interface Featured {
 
     String getLastUpdate();
 
-    //    Category getCategory();
     String getOriginalUrl();
 
     String getThumbnailUrl();
@@ -25,6 +24,7 @@ public interface Featured {
     String getDate();
 
     String getStoryid();
+
     String getDescription();
 
     boolean getIsBookmark();

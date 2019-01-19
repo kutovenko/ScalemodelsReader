@@ -4,7 +4,7 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Author;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
 
 public interface Post {
-    int getId();
+    long getId();
     Author getAuthor();
     String getTitle ();
     String getLastUpdate();
