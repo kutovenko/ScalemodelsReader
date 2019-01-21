@@ -59,7 +59,6 @@ public class NewsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         checkNetworkAvailability();
-//        refreshData();
     }
 
     @SuppressLint("WrongConstant")
@@ -141,6 +140,8 @@ public class NewsFragment extends Fragment {
     }
 
     private void subscribeUi(NewsListViewModel viewModel) {
+        categorySet = viewModel.loadCategories();
+
         viewModel.getLiveCategories().observe(this, categories -> binding.executePendingBindings());
 
         viewModel.getNews().observe(this, myPosts -> {
@@ -184,15 +185,10 @@ public class NewsFragment extends Fragment {
     }
 
     private void refreshData() {
-        int numberOfNews = viewModel.refreshPosts();
+        viewModel.refreshPosts();
         viewModel.refreshFeatured();
         categorySet = viewModel.loadCategories();
         viewModel.setCategory(categorySet);
-        if (numberOfNews > 0) {
-            Toast.makeText(getActivity(), numberOfNews
-                    + getResources().getQuantityString(R.plurals.news, numberOfNews)
-                    + MyAppConctants.SCALEMODELSRU, Toast.LENGTH_SHORT).show();
-        }
     }
 
     private final PostClickCallback mPostClickCallback = post -> {

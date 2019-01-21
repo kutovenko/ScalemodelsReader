@@ -5,18 +5,17 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Handler;
+import android.util.Log;
 
 import com.blogspot.alexeykutovenko.scalemodelsreader.DataRepository;
 import com.blogspot.alexeykutovenko.scalemodelsreader.R;
+import com.blogspot.alexeykutovenko.scalemodelsreader.network.GetValueCallback;
 import com.blogspot.alexeykutovenko.scalemodelsreader.ui.MainActivity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.util.MyAppConctants;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
 
-import java.text.MessageFormat;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -39,6 +38,7 @@ public class ScalemodelsNotificationService extends Job {
      * Required empty constructor
      */
     public ScalemodelsNotificationService() {
+
     }
 
     ScalemodelsNotificationService(DataRepository dataRepository, Context context) {
@@ -49,35 +49,44 @@ public class ScalemodelsNotificationService extends Job {
     @NonNull
     @Override
     protected Result onRunJob(Params params) {
-        AtomicInteger numberOfNews = new AtomicInteger();
-        new Handler().postDelayed(() -> numberOfNews.set(dataRepository.getScalemodelsPosts(context)), 300);
+        Log.d("MyNOTE", "NS onRunJob entered");
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
-                new Intent(getContext(), MainActivity.class), 0);
+        dataRepository.getScalemodelsPosts(context, new GetValueCallback() {
+            @Override
+            public void onSuccess(int value) {
+                Log.d("MyNOTE", "NS callback success " + value);
+                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
+                        new Intent(getContext(), MainActivity.class), 0);
+                Log.d("MyNOTE", "NS " + value);
 
-        if (numberOfNews.get() > 0) {
-            Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                    .setContentTitle(MyAppConctants.APP_NAME)
-                    .setContentText(MessageFormat.format(context.getString(R.string.news_notification), numberOfNews, TAG))
-                    .setAutoCancel(true)
-                    .setContentIntent(pendingIntent)
-                    .setSmallIcon(R.mipmap.ic_launcher)
-                    .setShowWhen(true)
-                    .setColor(Color.BLUE)
-                    .setLocalOnly(true)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .build();
+                Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                        .setContentTitle(MyAppConctants.APP_NAME)
+                        .setContentText(context.getString(R.string.news_notification, value))
+                        .setAutoCancel(true)
+                        .setContentIntent(pendingIntent)
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setShowWhen(true)
+                        .setColor(Color.BLUE)
+                        .setLocalOnly(true)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                        .build();
 
-            NotificationManagerCompat.from(getContext())
-                    .notify(NEWS_NOTIFICATION_ID, notification);
-        }
+                NotificationManagerCompat.from(getContext())
+                        .notify(NEWS_NOTIFICATION_ID, notification);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.d("MyNOTE", "NS onError");
+            }
+        });
 
         return Result.SUCCESS;
     }
 
     public static void schedulePeriodic() {
         new JobRequest.Builder(TAG)
-                .setPeriodic(TimeUnit.HOURS.toMillis(11), TimeUnit.MINUTES.toMillis(5))
+                .setPeriodic(TimeUnit.HOURS.toMillis(12), TimeUnit.MINUTES.toMillis(5))
                 .setUpdateCurrent(true)
                 .setPersisted(true)
                 .build()

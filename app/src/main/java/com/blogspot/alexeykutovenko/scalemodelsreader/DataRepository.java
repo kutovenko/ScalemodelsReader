@@ -9,6 +9,7 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.db.AppDatabase;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.FeaturedEntity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.network.GetValueCallback;
 import com.blogspot.alexeykutovenko.scalemodelsreader.network.ScalemodelsApi;
 import com.blogspot.alexeykutovenko.scalemodelsreader.util.MyAppConctants;
 
@@ -23,7 +24,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import androidx.annotation.NonNull;
@@ -101,7 +101,11 @@ public class DataRepository {
         return database.postDao().loadPost(postId);
     }
 
-
+    /**
+     * Set number of days to keep posts in database
+     *
+     * @param days number of days
+     */
     @SuppressLint("VisibleForTests")
     public void setNumberOfNews(int days) {
         long period = TimeUnit.DAYS.toMillis(days);
@@ -110,13 +114,12 @@ public class DataRepository {
         executor.execute(() -> database.postDao().deletePostsOlderThen(dateToDelete));
     }
 
-
     /**
      * Gets unique new posts (by story id) from Scalemodels in reverse chronological order.
      * Updates local database.
      */
-    public int getScalemodelsPosts(Context context) {
-        AtomicInteger numberOfNewEntries = new AtomicInteger();
+    public void getScalemodelsPosts(Context context, GetValueCallback callback) {
+        Log.d("MyNOTE", "DR getSPostsEntered");
         SharedPreferences preferences = context.getSharedPreferences(MyAppConctants.NEWS_NUMBER, Context.MODE_PRIVATE);
         int finalNumberOfNews = preferences.getInt(MyAppConctants.NEWS_NUMBER, 0);
         Call<List<PostEntity>> call = scalemodelsApi.getScalemodelsPosts();
@@ -125,21 +128,23 @@ public class DataRepository {
             @Override
             public void onResponse(@NonNull Call<List<PostEntity>> call,
                                    @NonNull Response<List<PostEntity>> response) {
-                Executor executor = Executors.newSingleThreadExecutor();
+                ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
-                    @SuppressLint("VisibleForTests") Set<String> expectedNames = database.postDao().getAllPosts().stream()
+                    @SuppressLint("VisibleForTests") Set<String> expectedNames = database.postDao()
+                            .getAllPosts().stream()
                             .map(PostEntity::getStoryid)
                             .collect(Collectors.toSet());
                     if (expectedNames.size() == 0) {
-                        //first time call, DB is empty
                         database.postDao().insertAll(response.body());
+                        assert response.body() != null;
+                        callback.onSuccess(response.body().size());
                     } else {
                         assert response.body() != null;
                         List<PostEntity> uniqueList = response.body().stream()
                                 .filter(p -> !expectedNames.contains(p.getStoryid()))
                                 .collect(Collectors.toList());
                         database.postDao().insertAll(uniqueList);
-                        numberOfNewEntries.set(uniqueList.size());
+                        callback.onSuccess(uniqueList.size());
                     }
 
                     if (finalNumberOfNews > 0) {
@@ -147,16 +152,19 @@ public class DataRepository {
                         setNumberOfNews(finalNumberOfNews);
                     }
                 });
+                closeExecutorCorrectly(executor);
             }
 
             @Override
             public void onFailure(@NonNull Call<List<PostEntity>> call, @NonNull Throwable t) {
-                Log.e("Retrofit Error", t.getMessage());
+                callback.onError(t);
             }
         });
-        return numberOfNewEntries.get();
     }
 
+    /**
+     * Gets featured posts from Scalemodels.ru. The list automatically updates on server side.
+     */
     public void getScalemodelsFeatured(){
         Call<List<FeaturedEntity>> call = scalemodelsApi.getScalemodelsFeaturedPosts();
         call.enqueue(new Callback<List<FeaturedEntity>>() {
@@ -164,12 +172,14 @@ public class DataRepository {
             @Override
             public void onResponse(@NonNull Call<List<FeaturedEntity>> call,
                                    @NonNull Response<List<FeaturedEntity>> response) {
-                Executor executor = Executors.newSingleThreadExecutor();
+                ExecutorService executor = Executors.newSingleThreadExecutor();
                 executor.execute(() -> {
                     database.postDao().deleteAllFeatureds();
                     assert response.body() != null;
                     database.postDao().insertAll(convertFeaturedToPost(response.body()));
                 });
+
+                closeExecutorCorrectly(executor);
             }
 
             @Override
@@ -216,6 +226,11 @@ public class DataRepository {
         return database.postDao().loadAllPosts();
     }
 
+    /**
+     * Gets list of categories from actual posts in database
+     *
+     * @return list of actual categories
+     */
     public List<Category> getCategories() {
         List<Category>[] cats = new ArrayList[]{new ArrayList<>()};
 
@@ -225,24 +240,29 @@ public class DataRepository {
         ExecutorService executor = Executors.newFixedThreadPool(1);
         Future<List<Category>> future = executor.submit(task);
 
-        try {
-            Log.e("category", "attempt to shutdown executor");
-            executor.shutdown();
-            executor.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            Log.e("category", "tasks interrupted");
-        } finally {
-            if (!executor.isTerminated()) {
-                Log.e("category", "cancel non-finished tasks");
-            }
-            executor.shutdownNow();
-            Log.e("category", "shutdown finished");
-        }
+        closeExecutorCorrectly(executor);
+
         try {
             cats[0] = future.get(3, TimeUnit.SECONDS);
         } catch (ExecutionException | InterruptedException | TimeoutException e) {
-            e.printStackTrace();
+            Log.e("DR", "getCategories returned " + e.getMessage());
         }
         return cats[0];
+    }
+
+    private void closeExecutorCorrectly(ExecutorService executor) {
+        try {
+            Log.e("DR", "attempt to shutdown executor");
+            executor.shutdown();
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Log.e("DR", "tasks interrupted");
+        } finally {
+            if (!executor.isTerminated()) {
+                Log.e("DR", "cancel non-finished tasks");
+            }
+            executor.shutdownNow();
+            Log.e("DR", "shutdown finished");
+        }
     }
 }

@@ -37,12 +37,19 @@
                 android:text="@{postViewModel.post.title}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
 
+            <ImageView
+                android:id="@+id/ivPic"
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:scaleType="fitCenter"
+                app:fullImageUrl="@{postViewModel.post.imagesUrls[0]}" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="32dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginRight="32dp"
-                android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -62,9 +69,9 @@
                     android:layout_marginLeft="8dp"
                     android:button="@xml/custom_checkbox"
                     android:buttonTint="@color/colorPrimary"
-                    android:visibility="@{!postViewModel.post.isFeatured ? 0 : 8}"
                     android:checked="@={postViewModel.post.isBookmark}"
-                    android:onClick="@{() ->  bookmarkCallback.onClick(postViewModel.post)}" />
+                    android:onClick="@{() ->  bookmarkCallback.onClick(postViewModel.post)}"
+                    android:visibility="@{!postViewModel.post.isFeatured ? 0 : 8}" />
 
 
                 <!--<TextView-->
@@ -76,13 +83,6 @@
                 <!--android:gravity="right"-->
                 <!--android:text="@{postViewModel.post.transformDate(postViewModel.post.date)}" />-->
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/ivPic"
-                android:layout_width="match_parent"
-                android:layout_height="250dp"
-                android:scaleType="fitCenter"
-                app:fullImageUrl="@{postViewModel.post.imagesUrls[0]}" />
 
             <!--<TextView-->
             <!--android:id="@+id/tvTitle"-->

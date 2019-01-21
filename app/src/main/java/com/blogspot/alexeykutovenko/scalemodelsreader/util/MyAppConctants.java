@@ -14,5 +14,5 @@ public class MyAppConctants {
     public static final String SCALEMODELSRU = "Scalemodels.ru";
     public static final String APP_NAME = "Scale Models Reader";
 
-    public static final String FB_LINK = "https://www.facebook.com/Scale-Models-Reader-2178711715678957/"; // TODO: 19.01.2019
+    public static final String FB_LINK = "https://www.facebook.com/Scale-Models-Reader-2178711715678957/";
 }

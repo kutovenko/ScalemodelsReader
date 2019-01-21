@@ -5,6 +5,7 @@ import android.app.Application;
 import com.blogspot.alexeykutovenko.scalemodelsreader.MyApp;
 import com.blogspot.alexeykutovenko.scalemodelsreader.db.entity.Category;
 import com.blogspot.alexeykutovenko.scalemodelsreader.model.PostEntity;
+import com.blogspot.alexeykutovenko.scalemodelsreader.network.GetValueCallback;
 
 import java.util.List;
 import java.util.Objects;
@@ -86,7 +87,17 @@ public class NewsListViewModel extends AndroidViewModel {
         application.getRepository().getScalemodelsFeatured();
     }
 
-    public int refreshPosts() {
-        return application.getRepository().getScalemodelsPosts(getApplication().getApplicationContext());
+    public void refreshPosts() {
+        application.getRepository().getScalemodelsPosts(getApplication().getApplicationContext(), new GetValueCallback() {
+            @Override
+            public void onSuccess(@NonNull int value) {
+
+            }
+
+            @Override
+            public void onError(@NonNull Throwable throwable) {
+
+            }
+        });
     }
 }

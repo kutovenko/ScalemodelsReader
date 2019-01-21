@@ -25,6 +25,10 @@ public interface PostDao {
     @Query("SELECT * FROM posts WHERE isFeatured = 0 ORDER BY date DESC")
     List<PostEntity> getAllPosts();
 
+
+    @Query("SELECT COUNT(*) FROM posts WHERE isFeatured = 0")
+    int countNews();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<PostEntity> posts);
 
