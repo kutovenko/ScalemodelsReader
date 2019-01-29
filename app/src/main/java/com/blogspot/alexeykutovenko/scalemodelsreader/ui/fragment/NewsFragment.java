@@ -23,6 +23,7 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.ui.adapter.FeaturedAdapter
 import com.blogspot.alexeykutovenko.scalemodelsreader.ui.adapter.NewsAdapter;
 import com.blogspot.alexeykutovenko.scalemodelsreader.ui.callback.PostClickCallback;
 import com.blogspot.alexeykutovenko.scalemodelsreader.util.MyAppConctants;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.NetworkUtils;
 import com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel.NewsListModelFactory;
 import com.blogspot.alexeykutovenko.scalemodelsreader.viewmodel.NewsListViewModel;
 import com.google.android.material.snackbar.Snackbar;
@@ -86,6 +87,7 @@ public class NewsFragment extends Fragment {
 
         binding.swipeContainer.setOnRefreshListener(() -> new Handler().post(() -> {
             binding.swipeContainer.setRefreshing(true);
+            checkNetworkAvailability();
             refreshData();
             binding.swipeContainer.setRefreshing(false);
             new Handler().postDelayed(() -> binding.rvPostList.scrollToPosition(0), 300);
@@ -170,12 +172,7 @@ public class NewsFragment extends Fragment {
     }
 
     private void checkNetworkAvailability() {
-        ConnectivityManager connectivityManager
-                = (ConnectivityManager) Objects.requireNonNull(getActivity(), "Activity must not be null")
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
-        assert connectivityManager != null;
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
+        if (!NetworkUtils.isNetworkAwailable(getActivity())) {
             Snackbar snackbar = Snackbar
                     .make(binding.getRoot(), getString(R.string.no_internet_connection), Snackbar.LENGTH_LONG);
             View sbView = snackbar.getView();

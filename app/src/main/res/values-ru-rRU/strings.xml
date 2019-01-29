@@ -27,6 +27,8 @@
     <string name="about_text">Scale Models Reader - бесплатное приложение для чтения лент новостей, связанных со стендовым моделированием.</string>
     <string name="support_and_feedback">Поддержка и обратная связь</string>
     <string name="facebook_page">Страница Facebook</string>
-    <string name="vk_page">Страница VK</string>
-    <string name="scalemodels_ru_forum_thread">Тема на форуме Scalemodels.ru</string>
+    <string name="vk_page">Страница VK (скоро)</string>
+    <string name="scalemodels_ru_forum_thread">Тема на форуме Scalemodels.ru (скоро)</string>
+    <string name="supported_sources">Доступные источники</string>
+    <string name="channel_name">Новые публикации</string>
 </resources>

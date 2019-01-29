@@ -4,7 +4,7 @@ import java.io.StringWriter;
 import java.util.HashMap;
 
 /**
- * Class for converting HTML escape characters in authors names ant posts text.
+ * Class handles specific operations with strings. Converts HTML escape characters in authors names ant posts text.
  * Based on https://stackoverflow.com/questions/994331/java-how-to-unescape-html-character-entities-in-java
  * as more lightweight solution than Apache Commons StringEscapeUtils.unescapeHtml().
  */
@@ -204,5 +204,4 @@ public class StringUtils {
         for (final CharSequence[] seq : ESCAPES)
             lookupMap.put(seq[1].toString(), seq[0]);
     }
-
 }

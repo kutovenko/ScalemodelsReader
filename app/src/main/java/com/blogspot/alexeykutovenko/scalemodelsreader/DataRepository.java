@@ -114,14 +114,24 @@ public class DataRepository {
         executor.execute(() -> database.postDao().deletePostsOlderThen(dateToDelete));
     }
 
+    @SuppressLint("VisibleForTests")
+    private long getHistoryStartDate(int days) {
+        if (days == 0) {
+            return 0;
+        } else {
+            long period = TimeUnit.DAYS.toMillis(days);
+            return System.currentTimeMillis() - period;
+        }
+    }
+
     /**
-     * Gets unique new posts (by story id) from Scalemodels in reverse chronological order.
+     * Gets unique (by story id) new posts from Scalemodels in reverse chronological order.
      * Updates local database.
      */
     public void getScalemodelsPosts(Context context, GetValueCallback callback) {
         Log.d("MyNOTE", "DR getSPostsEntered");
-        SharedPreferences preferences = context.getSharedPreferences(MyAppConctants.NEWS_NUMBER, Context.MODE_PRIVATE);
-        int finalNumberOfNews = preferences.getInt(MyAppConctants.NEWS_NUMBER, 0);
+        SharedPreferences preferences = context.getSharedPreferences(MyAppConctants.HISTORY_DEPTH, Context.MODE_PRIVATE);
+        int historyDepth = preferences.getInt(MyAppConctants.HISTORY_DEPTH, 0);
         Call<List<PostEntity>> call = scalemodelsApi.getScalemodelsPosts();
         call.enqueue(new Callback<List<PostEntity>>() {
             @SuppressLint("VisibleForTests")
@@ -141,18 +151,14 @@ public class DataRepository {
                     } else {
                         assert response.body() != null;
                         List<PostEntity> uniqueList = response.body().stream()
+                                .filter(p -> Long.parseLong(p.getDate()) >= getHistoryStartDate(historyDepth))
                                 .filter(p -> !expectedNames.contains(p.getStoryid()))
                                 .collect(Collectors.toList());
                         database.postDao().insertAll(uniqueList);
                         callback.onSuccess(uniqueList.size());
                     }
-
-                    if (finalNumberOfNews > 0) {
-                        //trim database to size.
-                        setNumberOfNews(finalNumberOfNews);
-                    }
                 });
-                closeExecutorCorrectly(executor);
+                closeCorrectly(executor);
             }
 
             @Override
@@ -163,7 +169,7 @@ public class DataRepository {
     }
 
     /**
-     * Gets featured posts from Scalemodels.ru. The list automatically updates on server side.
+     * Gets featured posts from Scalemodels.ru. Server updates the list automatically.
      */
     public void getScalemodelsFeatured(){
         Call<List<FeaturedEntity>> call = scalemodelsApi.getScalemodelsFeaturedPosts();
@@ -179,7 +185,7 @@ public class DataRepository {
                     database.postDao().insertAll(convertFeaturedToPost(response.body()));
                 });
 
-                closeExecutorCorrectly(executor);
+                closeCorrectly(executor);
             }
 
             @Override
@@ -240,7 +246,7 @@ public class DataRepository {
         ExecutorService executor = Executors.newFixedThreadPool(1);
         Future<List<Category>> future = executor.submit(task);
 
-        closeExecutorCorrectly(executor);
+        closeCorrectly(executor);
 
         try {
             cats[0] = future.get(3, TimeUnit.SECONDS);
@@ -250,7 +256,7 @@ public class DataRepository {
         return cats[0];
     }
 
-    private void closeExecutorCorrectly(ExecutorService executor) {
+    private void closeCorrectly(ExecutorService executor) {
         try {
             Log.e("DR", "attempt to shutdown executor");
             executor.shutdown();

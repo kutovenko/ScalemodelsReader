@@ -33,7 +33,8 @@
                 android:layout_marginRight="8dp"
                 android:background="@color/colorBackground"
                 android:scaleType="fitStart"
-                app:thumbnailUrl="@{post.thumbnailUrl}" />
+                app:thumbnailUrl="@{post.thumbnailUrl}"
+                android:contentDescription="@string/post_logo" />
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -70,23 +71,15 @@
 
             </LinearLayout>
 
-            <!--<CheckBox-->
-            <!--android:id="@+id/checkBox"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="8dp"-->
-            <!--android:button="@xml/custom_checkbox"-->
-            <!--android:buttonTint="@color/colorPrimary"-->
-            <!--android:visibility="@{post.isBookmark ?  0 : 8}" />-->
-
             <ImageView
                 android:id="@+id/imageView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="@{post.isBookmark ?  0 : 8}"
-                app:srcCompat="@drawable/ic_bookmark_on_black" />
+                app:srcCompat="@drawable/ic_bookmark_on_black"
+                android:contentDescription="@string/bookmark_icon" />
 
         </LinearLayout>
-
     </androidx.cardview.widget.CardView>
+
 </layout>

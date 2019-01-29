@@ -12,6 +12,8 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.R;
 import com.blogspot.alexeykutovenko.scalemodelsreader.network.GetValueCallback;
 import com.blogspot.alexeykutovenko.scalemodelsreader.ui.MainActivity;
 import com.blogspot.alexeykutovenko.scalemodelsreader.util.MyAppConctants;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.NetworkUtils;
+import com.blogspot.alexeykutovenko.scalemodelsreader.util.StringUtils;
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobRequest;
 
@@ -51,42 +53,43 @@ public class ScalemodelsNotificationService extends Job {
     protected Result onRunJob(Params params) {
         Log.d("MyNOTE", "NS onRunJob entered");
 
-        dataRepository.getScalemodelsPosts(context, new GetValueCallback() {
-            @Override
-            public void onSuccess(int value) {
-                Log.d("MyNOTE", "NS callback success " + value);
-                PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
-                        new Intent(getContext(), MainActivity.class), 0);
-                Log.d("MyNOTE", "NS " + value);
+        if (NetworkUtils.isNetworkAwailable(context)) {
+            dataRepository.getScalemodelsPosts(context, new GetValueCallback() {
+                @Override
+                public void onSuccess(int value) {
+                    Log.d("MyNOTE", "NS callback success " + value);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0,
+                            new Intent(getContext(), MainActivity.class), 0);
+                    Log.d("MyNOTE", "NS " + value);
 
-                Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                        .setContentTitle(MyAppConctants.APP_NAME)
-                        .setContentText(context.getString(R.string.news_notification, value))
-                        .setAutoCancel(true)
-                        .setContentIntent(pendingIntent)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setShowWhen(true)
-                        .setColor(Color.BLUE)
-                        .setLocalOnly(true)
-                        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                        .build();
+                    Notification notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                            .setContentTitle(MyAppConctants.APP_NAME)
+                            .setContentText(context.getString(R.string.news_notification, value))
+                            .setAutoCancel(true)
+                            .setContentIntent(pendingIntent)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setShowWhen(true)
+                            .setColor(Color.BLUE)
+                            .setLocalOnly(true)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .build();
 
-                NotificationManagerCompat.from(getContext())
-                        .notify(NEWS_NOTIFICATION_ID, notification);
-            }
+                    NotificationManagerCompat.from(getContext())
+                            .notify(NEWS_NOTIFICATION_ID, notification);
+                }
 
-            @Override
-            public void onError(Throwable throwable) {
-                Log.d("MyNOTE", "NS onError");
-            }
-        });
-
+                @Override
+                public void onError(Throwable throwable) {
+                    Log.d("MyNOTE", "NS onError");
+                }
+            });
+        }
         return Result.SUCCESS;
     }
 
     public static void schedulePeriodic() {
         new JobRequest.Builder(TAG)
-                .setPeriodic(TimeUnit.HOURS.toMillis(12), TimeUnit.MINUTES.toMillis(5))
+                .setPeriodic(TimeUnit.HOURS.toMillis(6), TimeUnit.MINUTES.toMillis(5))
                 .setUpdateCurrent(true)
                 .setPersisted(true)
                 .build()

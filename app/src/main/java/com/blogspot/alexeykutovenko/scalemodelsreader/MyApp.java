@@ -8,7 +8,7 @@ import com.blogspot.alexeykutovenko.scalemodelsreader.network.RestApiFactory;
 import com.blogspot.alexeykutovenko.scalemodelsreader.network.ScalemodelsApi;
 
 /**
- * Android Application class. Used for accessing singletons.
+ * Android Application class for accessing singletons.
  */
 public class MyApp extends Application {
 
@@ -28,15 +28,28 @@ public class MyApp extends Application {
         context = getApplicationContext();
     }
 
+    /**
+     * Singleton of the application database.
+     *
+     * @return database instance.
+     */
     public AppDatabase getDatabase() {
         return AppDatabase.getInstance(this, appExecutors);
     }
 
+    /**
+     * Singleton of the application data repository.
+     *
+     * @return instance of DataRepository class.
+     */
     public DataRepository getRepository() {
         return DataRepository.getInstance(getDatabase(), getScalemodelsApi());
     }
 
-    //for Retrofit
+    /**
+     * Singleton of the ScalemodelsAPI (for Retrofit library).
+     * @return instance of ScalemodelsApi class.
+     */
     public ScalemodelsApi getScalemodelsApi(){
         if(scalemodelsApi == null) {
             scalemodelsApi = RestApiFactory.create();

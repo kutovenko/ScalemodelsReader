@@ -33,8 +33,9 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_filter_list_black_24dp" />
-                            <entry key="sourceFile" value="C:\Users\Alexey" />
+                            <entry key="assetSourceType" value="FILE" />
+                            <entry key="outputName" value="ic_scalemodels_color" />
+                            <entry key="sourceFile" value="C:\Users\Alexey\Downloads\scalemodels.svg" />
                           </map>
                         </option>
                       </PersistentState>

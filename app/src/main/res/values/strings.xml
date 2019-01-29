@@ -34,7 +34,7 @@
     <string name="one_week">One week</string>
     <string name="featured_list">Featured list</string>
     <string name="post_list">Post list</string>
-    <string name="channel_name" translatable="false">default</string>
+    <string name="channel_name">New posts</string>
     <string name="channel_description">News notifications</string>
     <string name="news_notification">%d new articles</string>
     <string name="about">About</string>
@@ -42,8 +42,12 @@
     <string name="about_text">Scale Models Reader - free application for reading scale models related newsfeed.</string>
     <string name="support_and_feedback">Support and Feedback</string>
     <string name="facebook_page">Facebook Page</string>
-    <string name="vk_page">VK Page</string>
-    <string name="scalemodels_ru_forum_thread">Scalemodels.ru Forum Thread</string>
+    <string name="vk_page">VK Page (coming soon)</string>
+    <string name="scalemodels_ru_forum_thread">Scalemodels.ru Forum Thread (coming soon)</string>
+    <string name="supported_sources">Available sources</string>
+    <string name="scalemodels_ru" translatable="false">Scalemodels.ru</string>
+    <string name="post_logo">Post logo</string>
+    <string name="bookmark_icon">Bookmark icon</string>
     <plurals name="news">
         <item quantity="one">%d new post from </item>
         <item quantity="other">%d new posts from </item>
